@@ -1,0 +1,114 @@
+defaults: &defaults
+  docker:
+    - image: circleci/node:8.9
+
+version: 2.1
+
+jobs:
+  getClosedIssues:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: mkdir tmp
+      - run: npm run get-closed-issues -- --output="closed-issues.json"
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - closed-issues.json
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm test
+      - run: npm run build
+      - store_artifacts:
+          path: ./build
+          destination: build
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - build
+
+  deploy:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: ./some-deploy-script.sh
+
+  generateAndDeployChangelog:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: echo "//$PRIVATE_NPM_REGISTRY_URL/:_authToken=$PRIVATE_NPM_REGISTRY_TOKEN" >> ~/.npmrc
+      - run: npm config set @clever:registry http://$PRIVATE_NPM_REGISTRY_URL
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: mkdir changelog
+      - run: npm run create-changelog -- --input="./closed-issues.json" --output="./changelog/index.html"
+      - run: sudo npm install -g surge
+      - run: surge --project ./changelog --domain http://changelog.yourdomain.surge.sh
+
+  sendChangelogNotification:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: npm install
+      - run: npm run send-changelog-notification -- --input="./closed-issues.json"
+
+workflows:
+  build-deploy:
+    jobs:
+      - getClosedIssues:
+          filters:
+            branches:
+              only:
+                - /release\/.*/
+      - build:
+          filters:
+            branches:
+              only:
+                - develop
+                - /release\/.*/
+                - beta
+                - staging
+                - master
+      - deploy:
+          requires:
+            - build
+      - generateAndDeployChangelog:
+          requires:
+            - deploy
+      - sendChangelogNotification:
+          requires:
+            - generateAndDeployChangelog
