@@ -1,0 +1,43 @@
+{
+  "name": "cosmos-ledger-vue",
+  "version": "0.0.1",
+  "description": "A collection of vue components for delegating, redelegating, claiming rewards, voting, and other actions using a Ledger HW device",
+  "productName": "Cosmos Ledger Vue Components",
+  "cordovaId": "",
+  "capacitorId": "",
+  "author": "dev@union.market",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue src",
+    "test": "echo \"No test specified\" && exit 0",
+    "get-closed-issues": "node ./scripts/get-closed-issues.js",
+    "create-changelog": "node ./scripts/create-changelog.js",
+    "send-changelog-notification": "node ./scripts/send-changelog-notification.js"
+  },
+  "dependencies": {
+    "@ledgerhq/hw-transport-u2f": "^5.7.0",
+    "@ledgerhq/hw-transport-webusb": "^5.7.0",
+    "@quasar/extras": "^1.0.0",
+    "axios": "^0.18.1",
+    "quasar": "^1.0.0",
+    "vue-i18n": "^8.0.0"
+  },
+  "devDependencies": {
+    "@quasar/app": "^1.0.0",
+    "@vue/eslint-config-airbnb": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-vue": "^5.0.0"
+  },
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "browserslist": [
+    "last 1 version, not dead, ie >= 11"
+  ]
+}
