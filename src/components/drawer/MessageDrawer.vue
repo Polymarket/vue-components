@@ -18,12 +18,6 @@
         </q-item-section>
         <q-item-section>
           <q-item-label>{{ msg.message }}</q-item-label>
-          <!-- <q-item-label
-            v-if="entry.caption"
-            caption
-          >
-            {{ entry.caption }}
-          </q-item-label> -->
         </q-item-section>
       </q-item>
     </q-list>
@@ -42,6 +36,9 @@ export default {
     rightDrawer: {
       get() {
         return this.$store.state.session.rightDrawer;
+      },
+      set(val) {
+        this.$store.dispatch('session/toggleRightDrawer', val);
       },
     },
     messages: {

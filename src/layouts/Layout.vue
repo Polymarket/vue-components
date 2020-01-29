@@ -23,6 +23,7 @@
           icon="dynamic_feed"
           @click="rightDrawer = !rightDrawer"
         />
+        <LedgerDropdown />
       </q-toolbar>
     </q-header>
     <!-- <q-tabs>
@@ -100,12 +101,14 @@
 <script>
 import ComponentsListDrawer from '../components/drawer/ComponentsListDrawer';
 import MessageDrawer from '../components/drawer/MessageDrawer';
+import LedgerDropdown from '../components/LedgerDropdown';
 
 export default {
   name: 'Layout',
   components: {
     ComponentsListDrawer,
     MessageDrawer,
+    LedgerDropdown,
   },
   computed: {
     leftDrawer: {

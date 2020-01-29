@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     connectLedger() {
-      this.$store.dispatch('session/logInfo', 'connecting');
+      this.$store.dispatch('ledger/connectLedger');
     },
   },
 };

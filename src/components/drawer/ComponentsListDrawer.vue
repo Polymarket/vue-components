@@ -45,7 +45,7 @@ export default {
           icon: 'visibility',
           label: 'Get Address',
           caption: '',
-          routerTo: 'getAddress',
+          routerTo: 'address',
         },
         {
           icon: 'trending_flat',
@@ -57,17 +57,28 @@ export default {
           icon: 'local_atm',
           label: 'Rewards',
           caption: '',
-          routerTo: 'claimRewards',
+          routerTo: 'rewards',
+        },
+        {
+          icon: 'gavel',
+          label: 'Governance',
+          caption: '',
+          routerTo: 'governance',
         },
       ],
     };
   },
   computed: {
+
     leftDrawer: {
       get() {
         return this.$store.state.session.leftDrawer;
       },
+      set(val) {
+        this.$store.dispatch('session/toggleLeftDrawer', val);
+      },
     },
+
   },
 };
 </script>
