@@ -5,6 +5,10 @@ const routes = [
     component: () => import('layouts/Layout.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue') },
+      { path: 'address', component: () => import('pages/GetAddress.vue') },
+      { path: 'delegation', component: () => import('pages/Delegation.vue') },
+      { path: 'rewards', component: () => import('pages/Rewards.vue') },
+      { path: 'governance', component: () => import('pages/Governance.vue') },
     ],
   },
 ];

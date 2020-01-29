@@ -1,13 +1,14 @@
 export function SET_LEFT_DRAWER(state, val) {
   state.leftDrawer = val;
 }
+
 export function SET_RIGHT_DRAWER(state, val) {
   state.rightDrawer = val;
 }
+
 export function ADD_LOG_MESSAGE(state, val) {
   state.messages.push(val);
 }
-
 
 export function SET_LOADING(state, val) {
   Object.assign(state.loading, val);
@@ -15,7 +16,6 @@ export function SET_LOADING(state, val) {
 
 export function SET_DONE_LOADING(state, val) {
   Object.assign(state.loading, val);
-  // state.loading[val] = false;
 }
 
 
@@ -40,7 +40,6 @@ export function LOG_ERROR(state, val) {
 export function SET_VALIDATOR_CANDIDATES(state, payload) {
   state.validatorCandidates = payload;
 
-  console.log(payload);
   state.validatorDelegationSelectList = [];
   payload.forEach((item) => {
     const entry = {

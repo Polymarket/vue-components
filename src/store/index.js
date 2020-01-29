@@ -2,6 +2,10 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import session from './session';
+import ledger from './ledger';
+import governance from './governance';
+import iris from './iris';
+import cosmos from './cosmos';
 
 Vue.use(Vuex);
 
@@ -18,11 +22,15 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       session,
+      ledger,
+      governance,
+      iris,
+      cosmos,
     },
 
     // enable strict mode (adds overhead!)
     // for dev mode only
-    strict: process.env.DEV,
+    strict: true,
   });
 
   return Store;
