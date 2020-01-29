@@ -5,5 +5,11 @@ export default function () {
     locked: null,
     test_mode: null,
     detected: null,
+    HDPATH: [44, 118, 0, 0, 0],
+    address: {
+      cosmos: null,
+      iris: null,
+    },
+    transportChoice: 'WebUSB',
   };
 }

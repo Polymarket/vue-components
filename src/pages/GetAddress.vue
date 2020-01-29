@@ -1,16 +1,16 @@
 <template>
   <q-page padding>
-    <AddressTable />
+    <AddressViewer />
   </q-page>
 </template>
 
 <script>
-import AddressTable from '../components/AddressTable';
+import AddressViewer from '../components/AddressViewer';
 
 export default {
   name: 'GetAddress',
   components: {
-    AddressTable,
+    AddressViewer,
   },
 };
 </script>

@@ -367,7 +367,7 @@ export const checkCosmosTxStatus = async ({ rootState, commit, dispatch }) => {
       },
       { root: true },
     );
-    console.log(txResponse.logs[0].success === true);
+
     if (txResponse.logs[0].success === true) {
       commit('delegation/SET_ACTIVE_DELEGATION_PROMPT', 'TxSuccessPrompt', {
         root: true,
