@@ -1,114 +1,27 @@
-defaults: &defaults
-  docker:
-    - image: circleci/node:8.9
-
-version: 2.1
-
+version: 2
 jobs:
-  getClosedIssues:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run: mkdir tmp
-      - run: npm run get-closed-issues -- --output="closed-issues.json"
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - closed-issues.json
   build:
-    <<: *defaults
+    environment:
+      IMAGE_NAME: unionmarketplace/union-docker-images
+      IMAGE_TAG: um-icf-grant
+    docker:
+      - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run: npm test
-      - run: npm run build
-      - store_artifacts:
-          path: ./build
-          destination: build
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - build
-
-  deploy:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: ./some-deploy-script.sh
-
-  generateAndDeployChangelog:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: echo "//$PRIVATE_NPM_REGISTRY_URL/:_authToken=$PRIVATE_NPM_REGISTRY_TOKEN" >> ~/.npmrc
-      - run: npm config set @clever:registry http://$PRIVATE_NPM_REGISTRY_URL
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run: mkdir changelog
-      - run: npm run create-changelog -- --input="./closed-issues.json" --output="./changelog/index.html"
-      - run: sudo npm install -g surge
-      - run: surge --project ./changelog --domain http://changelog.yourdomain.surge.sh
-
-  sendChangelogNotification:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: npm install
-      - run: npm run send-changelog-notification -- --input="./closed-issues.json"
-
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t $IMAGE_NAME:$IMAGE_TAG-latest .
+      - run:
+          name: tag image
+          command: docker tag $IMAGE_NAME:$IMAGE_TAG-latest $IMAGE_NAME:$IMAGE_TAG-$CIRCLE_SHA1
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $IMAGE_NAME:$IMAGE_TAG-latest && docker push $IMAGE_NAME:$IMAGE_TAG-$CIRCLE_SHA1
 workflows:
-  build-deploy:
+  version: 2
+  build-master:
     jobs:
-      - getClosedIssues:
-          filters:
-            branches:
-              only:
-                - /release\/.*/
-      - build:
-          filters:
-            branches:
-              only:
-                - develop
-                - /release\/.*/
-                - beta
-                - staging
-                - master
-      - deploy:
-          requires:
-            - build
-      - generateAndDeployChangelog:
-          requires:
-            - deploy
-      - sendChangelogNotification:
-          requires:
-            - generateAndDeployChangelog
+      - build

@@ -60,7 +60,7 @@ module.exports = function (ctx) {
       vueRouterMode: 'history', // available values: 'hash', 'history'
       showProgress: true,
       gzip: false,
-      analyze: true,
+      analyze: false,
       // Options below are automatically set depending on the env, set them if you want to override
       preloadChunks: true,
       extractCSS: true,
