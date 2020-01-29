@@ -2,25 +2,6 @@
 
 A collection of vue components for delegating, redelegating, claiming rewards, voting, and other actions using a Ledger HW device
 
-## Install the dependencies
-```bash
-npm install
-```
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/978ec71e5cb64570a2acccf216fe0a6b)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=TokenUnion/union-marketplace-icf-grant&amp;utm_campaign=Badge_Grade)
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
 
-### Lint the files
-```bash
-npm run lint
-```
-
-### Build the app for production
-```bash
-quasar build
-```
-
-### Customize the configuration
-See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
