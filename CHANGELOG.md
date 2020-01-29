@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.0.3](https://github.com/TokenUnion/union-marketplace-icf-grant/tree/v0.0.3) (2020-01-29)
+
+[Full Changelog](https://github.com/TokenUnion/union-marketplace-icf-grant/compare/v0.0.2...v0.0.3)
+
+**Merged pull requests:**
+
+- v0.0.3 [\#13](https://github.com/TokenUnion/union-marketplace-icf-grant/pull/13) ([RyanHendricks](https://github.com/RyanHendricks))
+- Address Viewer Integration [\#12](https://github.com/TokenUnion/union-marketplace-icf-grant/pull/12) ([RyanHendricks](https://github.com/RyanHendricks))
+
 ## [v0.0.2](https://github.com/TokenUnion/union-marketplace-icf-grant/tree/v0.0.2) (2020-01-29)
 
 [Full Changelog](https://github.com/TokenUnion/union-marketplace-icf-grant/compare/v0.0.1...v0.0.2)
