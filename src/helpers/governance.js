@@ -63,33 +63,6 @@ export const processCosmosGovernanceProposals = async (val) => {
   }
 };
 
-// {
-//   "content": {
-//     "type": "cosmos-sdk/TextProposal",
-//       "value": {
-//       "title": "Important",
-//         "description": "COSMOS.NETWORK IS AWESOME. WE LOVE IT! MONEY IS A MEME."
-//     }
-//   },
-//   "id": "22",
-//     "proposal_status": "DepositPeriod",
-//       "final_tally_result": {
-//     "yes": "0",
-//       "abstain": "0",
-//         "no": "0",
-//           "no_with_veto": "0"
-//   },
-//   "submit_time": "2019-12-15T23:28:22.551610622Z",
-//     "deposit_end_time": "2019-12-29T23:28:22.551610622Z",
-//       "total_deposit": [
-//         {
-//           "denom": "uatom",
-//           "amount": "1000"
-//         }
-//       ],
-//         "voting_start_time": "0001-01-01T00:00:00Z",
-//           "voting_end_time": "0001-01-01T00:00:00Z"
-// }
 
 /**
  * @function processIrisGovernanceProposals

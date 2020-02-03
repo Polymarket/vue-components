@@ -1,15 +1,16 @@
+import axios from 'axios';
 import { COSMOS_NODE_URL } from '../../config/nodes';
+
 
 /**
  * @function requestWrapper
  * @description wrapper to handle api calls
- * @param  {string} endpoint {description}
+ * @param  {string} endpoint the api endpoint used in the GET request
  */
 const requestWrapper = async (endpoint) => {
   try {
     const url = `${COSMOS_NODE_URL}${endpoint}`;
-
-    const res = await this.$axios.get(url);
+    const res = await axios.get(url);
     return res.data.result;
   } catch (e) {
     throw new Error(e);
@@ -18,11 +19,11 @@ const requestWrapper = async (endpoint) => {
 
 
 /**
- * @function fetchValidatorCandidates
+ * @function fetchCosmosValidatorSet
  * @description returns the latest validator candidates
  * @return {array} validator candidates
  */
-export const fetchCosmosValidatorCandidates = async () => {
+export const fetchCosmosValidatorSet = async () => {
   try {
     const endpoint = '/staking/validators';
     return await requestWrapper(endpoint);
@@ -32,7 +33,7 @@ export const fetchCosmosValidatorCandidates = async () => {
 };
 
 /**
- * @function fetchLatestBlock
+ * @function fetchCosmosLatestBlock
  * @description gets the latest block height
  * @return  {commit} {SET_LAST_BLOCK}
  */
@@ -46,7 +47,7 @@ export const fetchCosmosLatestBlock = async () => {
 };
 
 /**
- * @function fetchStakingParameters
+ * @function fetchCosmosStakingParameters
  * @description fetches staking parameters including denom
  */
 export const fetchCosmosStakingParameters = async () => {
@@ -59,7 +60,7 @@ export const fetchCosmosStakingParameters = async () => {
 };
 
 /**
- * @function fetchAddressDelegationHistory
+ * @function fetchCosmosAddressDelegationTxHistory
  * @description returns the delegation transaction history for a given address
  * @return  {res.data} delegation transaction history
  * @param address
@@ -74,9 +75,8 @@ export const fetchCosmosAddressDelegationTxHistory = async (address) => {
 };
 
 /**
- * @function fetchAddressDelegations
+ * @function fetchCosmosAddressDelegations
  * @description returns aggregate delegations from an address to all validators
- * @return {res.data} {description}
  * @param address
  */
 export const fetchCosmosAddressDelegations = async (address) => {
@@ -89,10 +89,9 @@ export const fetchCosmosAddressDelegations = async (address) => {
 };
 
 /**
- * @function fetchAddressUnbondingDelegations
+ * @function fetchCosmosAddressUnbondingDelegations
  * @description fetches unbonding delegations for an address
  * @param  {type} address {description}
- * @return {type} {description}
  */
 export const fetchCosmosAddressUnbondingDelegations = async (address) => {
   try {
@@ -104,10 +103,10 @@ export const fetchCosmosAddressUnbondingDelegations = async (address) => {
 };
 
 /**
- * @function fetchDelegateValidatorRewards
+ * @function fetchCosmosDelegateValidatorRewards
  * @description fetches rewards balance for a delegate from a validator delegation
- * @param  {type} address           {description}
- * @param  {type} validatorAddress {description}
+ * @param  {type} address           {address of the delegator}
+ * @param  {type} validatorAddress {address of the validator}
  */
 export const fetchCosmosDelegateValidatorRewards = async (
   address,
@@ -122,9 +121,8 @@ export const fetchCosmosDelegateValidatorRewards = async (
 };
 
 /**
- * @function fetchAccountAuthInfo
+ * @function fetchCosmosAccountAuthInfo
  * @description returns aggregate delegations from an address to all validators
- * @return {res.data} {description}
  * @param address
  */
 export const fetchCosmosAccountAuthInfo = async (address) => {
@@ -137,10 +135,9 @@ export const fetchCosmosAccountAuthInfo = async (address) => {
 };
 
 /**
- * @function fetchAccountBalance
+ * @function fetchCosmosAccountBalance
  * @description returns the balance for a given address
  * @param  {type} address account address
- * @return {array} {of denoms and amounts}
  */
 export const fetchCosmosAccountBalance = async (address) => {
   try {
@@ -152,7 +149,7 @@ export const fetchCosmosAccountBalance = async (address) => {
 };
 
 /**
- * @function fetchDelegateValidatorRewards
+ * @function fetchCosmosDelegationRewards
  * @description fetches rewards balance for a delegate from a validator delegation
  * @param  {type} address           {description}
  * @param  {string} validatorAddress {description}
@@ -170,7 +167,7 @@ export const fetchCosmosDelegationRewards = async (
 };
 
 /**
- * @function fetchCosmosDelegateValidatorUnbondingTxs
+ * @function fetchCosmosDelegationUnbondingTxs
  * @description fetches rewards balance for a delegate from a validator delegation
  * @param  {type} address           {description}
  * @param  {type} validatorAddress {description}
@@ -181,16 +178,6 @@ export const fetchCosmosDelegationUnbondingTxs = async (
 ) => {
   try {
     const endpoint = `/staking/delegators/${address}/unbonding_delegations/${validatorAddress}`;
-    return await requestWrapper(endpoint);
-  } catch (e) {
-    throw new Error(e);
-  }
-};
-
-// workaround until can be pulled from DB
-export const fetchCosmosValidatorSet = async () => {
-  try {
-    const endpoint = '/staking/validators';
     return await requestWrapper(endpoint);
   } catch (e) {
     throw new Error(e);
@@ -209,7 +196,7 @@ export const fetchCosmosValidatorSet = async () => {
 export const postCosmosSignedTx = async (txData) => {
   try {
     const url = `${COSMOS_NODE_URL}/txs`;
-    return await this.$axios.post(url, JSON.stringify(txData));
+    return await axios.post(url, JSON.stringify(txData));
   } catch (e) {
     throw new Error(e);
   }

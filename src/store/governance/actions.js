@@ -18,7 +18,7 @@ export const fetchGovernanceProposals = async ({ dispatch }) => {
     dispatch('queryIrisProposals');
     dispatch('queryCosmosProposals');
   } catch (e) {
-    throw new Error(e);
+    dispatch('session/logError', e, { root: true });
   }
 };
 

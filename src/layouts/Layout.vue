@@ -14,8 +14,10 @@
           @click="leftDrawer = !leftDrawer"
         />
         <q-toolbar-title>
-          Cosmos Ledger Vue Components
+          Ledger Vue Components
         </q-toolbar-title>
+
+        <LedgerDropdown />
         <q-btn
           flat
           round
@@ -23,7 +25,6 @@
           icon="dynamic_feed"
           @click="rightDrawer = !rightDrawer"
         />
-        <LedgerDropdown />
       </q-toolbar>
     </q-header>
     <!-- <q-tabs>
