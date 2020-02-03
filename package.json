@@ -10,7 +10,8 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "start": "quasar dev",
-    "build": "quasar build"
+    "build": "quasar build",
+    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json"
   },
   "dependencies": {
     "@ledgerhq/hw-transport-u2f": "^5.7.0",
@@ -35,11 +36,13 @@
     "@quasar/app": "^1.0.0",
     "@vue/eslint-config-airbnb": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "docdash": "^1.2.0",
     "eslint": "^5.10.0",
     "eslint-loader": "^2.1.1",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-vue": "^5.0.0"
+    "eslint-plugin-vue": "^5.0.0",
+    "jsdoc": "^3.6.3"
   },
   "engines": {
     "node": ">= 10.18.1",

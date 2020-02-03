@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: helpers/ledger.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: helpers/ledger.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
+
+// import TransportU2F from "@ledgerhq/hw-transport-u2f";
+import CosmosApp from 'ledger-cosmos-js';
+import { createCosmosAddress, createIrisAddress } from './wallet';
+
+const secp256k1 = require('secp256k1');
+
+const HDPATH = [44, 118, 0, 0, 0];
+
+/**
+ * @function connectLedger
+ * @description returns a ledger app connection (longer timeout since it is connected)
+ */
+export const connectLedger = async () => {
+  let transport = null;
+  transport = await TransportWebUSB.create();
+  return new CosmosApp(transport);
+};
+
+/**
+ * @function pollLedgerDevice
+ */
+export const pollLedgerDevice = async () => {
+  let transport = null;
+  transport = await TransportWebUSB.create();
+  const app = new CosmosApp(transport);
+  const version = await app.getVersion();
+  return version;
+};
+
+/**
+ * @function getLedgerCosmosVersion
+ * @description returns a response object containing the version of the cosmos ledger app
+ */
+export const getLedgerCosmosVersion = async () => {
+  try {
+    const cosmosLedgerApp = await connectLedger();
+    const response = await cosmosLedgerApp.getVersion();
+    return response;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function getLedgerPubKey
+ */
+export const getLedgerPubKey = async () => {
+  try {
+    const cosmosLedgerApp = await connectLedger();
+    const response = await cosmosLedgerApp.publicKey(HDPATH);
+    response.HDPATH = HDPATH;
+
+    return response;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function getCosmosAddressFromPubkey
+ * @param  {type} pubKey {description}
+ * @return {type} {description}
+ */
+export const getCosmosAddressFromPubkey = async (pubKey) => {
+  try {
+    const address = await createCosmosAddress(pubKey);
+    return address;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function getIrisAddressFromPubkey
+ * @param  {type} pubKey {description}
+ * @return {type} {description}
+ */
+export const getIrisAddressFromPubkey = async (pubKey) => {
+  try {
+    const address = await createIrisAddress(pubKey);
+    return address;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function signMsg
+ * @param  {type} accountHDPATH HDPATH for the account being used to sign
+ * @param  {type} msg           unsigned message for signing
+ * @return {type} the signature(s) from signing the message
+ */
+export const signMsg = async (accountHDPATH, msg) => {
+  try {
+    const cosmosLedgerApp = await connectLedger();
+
+    const pubKey = await cosmosLedgerApp.publicKey(accountHDPATH);
+    const res = await cosmosLedgerApp.sign(accountHDPATH, JSON.stringify(msg));
+    const secp256k1Sig = secp256k1.signatureImport(res.signature);
+
+    const signatures = [
+      {
+        signature: secp256k1Sig.toString('base64'),
+        account_number: msg.account_number,
+        sequence: msg.sequence,
+        pub_key: {
+          type: 'tendermint/PubKeySecp256k1',
+          value: Buffer.from(pubKey.compressed_pk, 'hex').toString('base64'),
+        },
+      },
+    ];
+
+    return signatures;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beginDelegation">beginDelegation</a></li><li><a href="global.html#beginIrisDelegation">beginIrisDelegation</a></li><li><a href="global.html#beginRedelegation">beginRedelegation</a></li><li><a href="global.html#beginUnbonding">beginUnbonding</a></li><li><a href="global.html#buildSignSendCosmosTx">buildSignSendCosmosTx</a></li><li><a href="global.html#checkIrisTxStatus">checkIrisTxStatus</a></li><li><a href="global.html#CLEAR_IRIS_ACCOUNT">CLEAR_IRIS_ACCOUNT</a></li><li><a href="global.html#connectLedger">connectLedger</a></li><li><a href="global.html#enrichAccounts">enrichAccounts</a></li><li><a href="global.html#enrichCosmosAddress">enrichCosmosAddress</a></li><li><a href="global.html#enrichCosmosAddresses">enrichCosmosAddresses</a></li><li><a href="global.html#enrichIrisAddresses">enrichIrisAddresses</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#fetchCosmosAccountAuthInfo">fetchCosmosAccountAuthInfo</a></li><li><a href="global.html#fetchCosmosAccountBalance">fetchCosmosAccountBalance</a></li><li><a href="global.html#fetchCosmosAddressDelegations">fetchCosmosAddressDelegations</a></li><li><a href="global.html#fetchCosmosAddressDelegationTxHistory">fetchCosmosAddressDelegationTxHistory</a></li><li><a href="global.html#fetchCosmosAddressUnbondingDelegations">fetchCosmosAddressUnbondingDelegations</a></li><li><a href="global.html#fetchCosmosDelegateValidatorRewards">fetchCosmosDelegateValidatorRewards</a></li><li><a href="global.html#fetchCosmosDelegationRewards">fetchCosmosDelegationRewards</a></li><li><a href="global.html#fetchCosmosDelegationUnbondingTxs">fetchCosmosDelegationUnbondingTxs</a></li><li><a href="global.html#fetchCosmosGovernanceProposals">fetchCosmosGovernanceProposals</a></li><li><a href="global.html#fetchCosmosGovProposalVotesByProposalId">fetchCosmosGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchCosmosLatestBlock">fetchCosmosLatestBlock</a></li><li><a href="global.html#fetchCosmosStakingParameters">fetchCosmosStakingParameters</a></li><li><a href="global.html#fetchCosmosTxByHash">fetchCosmosTxByHash</a></li><li><a href="global.html#fetchCosmosValidatorSet">fetchCosmosValidatorSet</a></li><li><a href="global.html#fetchGovernanceProposals">fetchGovernanceProposals</a></li><li><a href="global.html#fetchIrisAccountAuthInfo">fetchIrisAccountAuthInfo</a></li><li><a href="global.html#fetchIrisAccountBalance">fetchIrisAccountBalance</a></li><li><a href="global.html#fetchIrisAddressDelegationHistory">fetchIrisAddressDelegationHistory</a></li><li><a href="global.html#fetchIrisAddressDelegations">fetchIrisAddressDelegations</a></li><li><a href="global.html#fetchIrisAddressUnbondingDelegations">fetchIrisAddressUnbondingDelegations</a></li><li><a href="global.html#fetchIrisDelegateValidatorRewards">fetchIrisDelegateValidatorRewards</a></li><li><a href="global.html#fetchIrisGovernanceProposals">fetchIrisGovernanceProposals</a></li><li><a href="global.html#fetchIrisGovProposalVotesByProposalId">fetchIrisGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchIrisLatestBlock">fetchIrisLatestBlock</a></li><li><a href="global.html#fetchIrisNodeInfo">fetchIrisNodeInfo</a></li><li><a href="global.html#fetchIrisStakingParameters">fetchIrisStakingParameters</a></li><li><a href="global.html#fetchIrisTxByHash">fetchIrisTxByHash</a></li><li><a href="global.html#fetchIrisValidatorCandidates">fetchIrisValidatorCandidates</a></li><li><a href="global.html#getCosmosAddressFromPubkey">getCosmosAddressFromPubkey</a></li><li><a href="global.html#getIrisAddressFromPubkey">getIrisAddressFromPubkey</a></li><li><a href="global.html#getLedgerAddressOnly">getLedgerAddressOnly</a></li><li><a href="global.html#getLedgerCosmosVersion">getLedgerCosmosVersion</a></li><li><a href="global.html#getLedgerPubKey">getLedgerPubKey</a></li><li><a href="global.html#pollLedgerDevice">pollLedgerDevice</a></li><li><a href="global.html#postSignedTx">postSignedTx</a></li><li><a href="global.html#processCosmosGovernanceProposals">processCosmosGovernanceProposals</a></li><li><a href="global.html#processIrisGovernanceProposals">processIrisGovernanceProposals</a></li><li><a href="global.html#queryCosmosProposals">queryCosmosProposals</a></li><li><a href="global.html#queryIrisProposals">queryIrisProposals</a></li><li><a href="global.html#requestWrapper">requestWrapper</a></li><li><a href="global.html#SET_COSMOS_ADDRESS">SET_COSMOS_ADDRESS</a></li><li><a href="global.html#SET_COSMOS_PROPOSALS">SET_COSMOS_PROPOSALS</a></li><li><a href="global.html#SET_CURRENT_PROPOSAL">SET_CURRENT_PROPOSAL</a></li><li><a href="global.html#SET_IRIS_ADDRESS">SET_IRIS_ADDRESS</a></li><li><a href="global.html#SET_IRIS_PROPOSALS">SET_IRIS_PROPOSALS</a></li><li><a href="global.html#SET_LEDGER_STATUS">SET_LEDGER_STATUS</a></li><li><a href="global.html#setCurrentProposal">setCurrentProposal</a></li><li><a href="global.html#signMsg">signMsg</a></li><li><a href="global.html#withdrawAllRewards">withdrawAllRewards</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 29 2020 12:21:45 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

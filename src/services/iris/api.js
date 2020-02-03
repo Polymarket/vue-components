@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { IRIS_NODE_URL } from '../../config/nodes';
+
 
 /**
  * @function requestWrapper
@@ -8,7 +10,7 @@ import { IRIS_NODE_URL } from '../../config/nodes';
 const requestWrapper = async (endpoint) => {
   try {
     const url = `${IRIS_NODE_URL}${endpoint}`;
-    const res = await this.$axios.get(url);
+    const res = await axios.get(url);
     return res.data;
   } catch (e) {
     throw new Error(e);
@@ -187,7 +189,7 @@ export const fetchIrisAccountBalance = async (address) => {
 export const postIrisSignedTx = async (txData) => {
   try {
     const url = `${IRIS_NODE_URL}/tx/broadcast`;
-    return await this.$axios.post(url, JSON.stringify(txData));
+    return await axios.post(url, JSON.stringify(txData));
   } catch (e) {
     throw new Error(e);
   }

@@ -1,10 +1,8 @@
 <template>
   <div class="row justify-center">
     <q-card
-
-
       bordered
-      class="my-card transparent q-ma-lg q-pa-none"
+      class="transparent q-ma-lg q-pa-none"
       style="width: 100%; max-width: 500px"
     >
       <q-card-section>
@@ -93,21 +91,6 @@ export default {
       }
       return false;
     },
-    // cosmosAddress: {
-    //   get() {
-    //     return this.$store.state.ledger.address.cosmos;
-    //   },
-    // },
-    // irisAddress: {
-    //   get() {
-    //     return this.$store.state.ledger.address.iris;
-    //   },
-    // },
-    // ledgerStatus: {
-    //   get() {
-
-    //   },
-    // },
   },
   methods: {
     getLedgerAddress() {

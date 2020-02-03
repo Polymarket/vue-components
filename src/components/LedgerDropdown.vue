@@ -2,8 +2,8 @@
   <div>
     <q-btn-dropdown
       flat
-      icon="account balance wallet"
-      label="Wallet"
+      icon="account_balance_wallet"
+      label="Ledger"
     >
       <!-- dropdown content -->
       <q-list
