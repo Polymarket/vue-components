@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/cosmos/api.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/cosmos/api.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import axios from 'axios';
+import { COSMOS_NODE_URL } from '../../config/nodes';
+
+
+/**
+ * @function requestWrapper
+ * @description wrapper to handle api calls
+ * @param  {string} endpoint the api endpoint used in the GET request
+ */
+const requestWrapper = async (endpoint) => {
+  try {
+    const url = `${COSMOS_NODE_URL}${endpoint}`;
+    const res = await axios.get(url);
+    return res.data.result;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+
+/**
+ * @function fetchCosmosValidatorSet
+ * @description returns the latest validator candidates
+ * @return {array} validator candidates
+ */
+export const fetchCosmosValidatorSet = async () => {
+  try {
+    const endpoint = '/staking/validators';
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosLatestBlock
+ * @description gets the latest block height
+ * @return  {commit} {SET_LAST_BLOCK}
+ */
+export const fetchCosmosLatestBlock = async () => {
+  try {
+    const endpoint = '/blocks/latest';
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosStakingParameters
+ * @description fetches staking parameters including denom
+ */
+export const fetchCosmosStakingParameters = async () => {
+  try {
+    const endpoint = '/staking/parameters';
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosAddressDelegationTxHistory
+ * @description returns the delegation transaction history for a given address
+ * @return  {res.data} delegation transaction history
+ * @param address
+ */
+export const fetchCosmosAddressDelegationTxHistory = async (address) => {
+  try {
+    const endpoint = `/staking/delegators/${address}/txs`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosAddressDelegations
+ * @description returns aggregate delegations from an address to all validators
+ * @param address
+ */
+export const fetchCosmosAddressDelegations = async (address) => {
+  try {
+    const endpoint = `/staking/delegators/${address}/delegations`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosAddressUnbondingDelegations
+ * @description fetches unbonding delegations for an address
+ * @param  {type} address {description}
+ */
+export const fetchCosmosAddressUnbondingDelegations = async (address) => {
+  try {
+    const endpoint = `/staking/delegators/${address}/unbonding_delegations`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosDelegateValidatorRewards
+ * @description fetches rewards balance for a delegate from a validator delegation
+ * @param  {type} address           {address of the delegator}
+ * @param  {type} validatorAddress {address of the validator}
+ */
+export const fetchCosmosDelegateValidatorRewards = async (
+  address,
+  validatorAddress,
+) => {
+  try {
+    const endpoint = `/distribution/delegators/${address}/rewards/${validatorAddress}`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosAccountAuthInfo
+ * @description returns aggregate delegations from an address to all validators
+ * @param address
+ */
+export const fetchCosmosAccountAuthInfo = async (address) => {
+  try {
+    const endpoint = `/auth/accounts/${address}`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosAccountBalance
+ * @description returns the balance for a given address
+ * @param  {type} address account address
+ */
+export const fetchCosmosAccountBalance = async (address) => {
+  try {
+    const endpoint = `/bank/balances/${address}`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosDelegationRewards
+ * @description fetches rewards balance for a delegate from a validator delegation
+ * @param  {type} address           {description}
+ * @param  {string} validatorAddress {description}
+ */
+export const fetchCosmosDelegationRewards = async (
+  address,
+  validatorAddress,
+) => {
+  try {
+    const endpoint = `/distribution/delegators/${address}/rewards/${validatorAddress}`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosDelegationUnbondingTxs
+ * @description fetches rewards balance for a delegate from a validator delegation
+ * @param  {type} address           {description}
+ * @param  {type} validatorAddress {description}
+ */
+export const fetchCosmosDelegationUnbondingTxs = async (
+  address,
+  validatorAddress,
+) => {
+  try {
+    const endpoint = `/staking/delegators/${address}/unbonding_delegations/${validatorAddress}`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * ----------------------- TX -----------------------
+ */
+
+/**
+ * @function postSignedTx
+ * @param  {object} txData {Signed transaction object for transmission}
+ * @return {hash} {transaction hash}
+ */
+export const postCosmosSignedTx = async (txData) => {
+  try {
+    const url = `${COSMOS_NODE_URL}/txs`;
+    return await axios.post(url, JSON.stringify(txData));
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosTxByHash
+ */
+export const fetchCosmosTxByHash = async (txHash) => {
+  try {
+    const endpoint = `/txs/${txHash}`;
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * ----------------------- GOVERNANCE -----------------------
+ */
+
+/**
+ * @function fetchCosmosGovernanceProposals
+ * @description queries for the latest governance proposals
+ */
+export const fetchCosmosGovernanceProposals = async () => {
+  try {
+    const endpoint = '/gov/proposals';
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * @function fetchCosmosGovProposalVotesByProposalId
+ */
+export const fetchCosmosGovProposalVotesByProposalId = async () => {
+  try {
+    const endpoint = '/gov/proposals';
+    return await requestWrapper(endpoint);
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beginDelegation">beginDelegation</a></li><li><a href="global.html#beginIrisDelegation">beginIrisDelegation</a></li><li><a href="global.html#beginRedelegation">beginRedelegation</a></li><li><a href="global.html#beginUnbonding">beginUnbonding</a></li><li><a href="global.html#buildSignSendCosmosTx">buildSignSendCosmosTx</a></li><li><a href="global.html#checkIrisTxStatus">checkIrisTxStatus</a></li><li><a href="global.html#CLEAR_IRIS_ACCOUNT">CLEAR_IRIS_ACCOUNT</a></li><li><a href="global.html#connectLedger">connectLedger</a></li><li><a href="global.html#enrichAccounts">enrichAccounts</a></li><li><a href="global.html#enrichCosmosAddress">enrichCosmosAddress</a></li><li><a href="global.html#enrichCosmosAddresses">enrichCosmosAddresses</a></li><li><a href="global.html#enrichIrisAddresses">enrichIrisAddresses</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#fetchCosmosAccountAuthInfo">fetchCosmosAccountAuthInfo</a></li><li><a href="global.html#fetchCosmosAccountBalance">fetchCosmosAccountBalance</a></li><li><a href="global.html#fetchCosmosAddressDelegations">fetchCosmosAddressDelegations</a></li><li><a href="global.html#fetchCosmosAddressDelegationTxHistory">fetchCosmosAddressDelegationTxHistory</a></li><li><a href="global.html#fetchCosmosAddressUnbondingDelegations">fetchCosmosAddressUnbondingDelegations</a></li><li><a href="global.html#fetchCosmosDelegateValidatorRewards">fetchCosmosDelegateValidatorRewards</a></li><li><a href="global.html#fetchCosmosDelegationRewards">fetchCosmosDelegationRewards</a></li><li><a href="global.html#fetchCosmosDelegationUnbondingTxs">fetchCosmosDelegationUnbondingTxs</a></li><li><a href="global.html#fetchCosmosGovernanceProposals">fetchCosmosGovernanceProposals</a></li><li><a href="global.html#fetchCosmosGovProposalVotesByProposalId">fetchCosmosGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchCosmosLatestBlock">fetchCosmosLatestBlock</a></li><li><a href="global.html#fetchCosmosStakingParameters">fetchCosmosStakingParameters</a></li><li><a href="global.html#fetchCosmosTxByHash">fetchCosmosTxByHash</a></li><li><a href="global.html#fetchCosmosValidatorSet">fetchCosmosValidatorSet</a></li><li><a href="global.html#fetchGovernanceProposals">fetchGovernanceProposals</a></li><li><a href="global.html#fetchIrisAccountAuthInfo">fetchIrisAccountAuthInfo</a></li><li><a href="global.html#fetchIrisAccountBalance">fetchIrisAccountBalance</a></li><li><a href="global.html#fetchIrisAddressDelegationHistory">fetchIrisAddressDelegationHistory</a></li><li><a href="global.html#fetchIrisAddressDelegations">fetchIrisAddressDelegations</a></li><li><a href="global.html#fetchIrisAddressUnbondingDelegations">fetchIrisAddressUnbondingDelegations</a></li><li><a href="global.html#fetchIrisDelegateValidatorRewards">fetchIrisDelegateValidatorRewards</a></li><li><a href="global.html#fetchIrisGovernanceProposals">fetchIrisGovernanceProposals</a></li><li><a href="global.html#fetchIrisGovProposalVotesByProposalId">fetchIrisGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchIrisLatestBlock">fetchIrisLatestBlock</a></li><li><a href="global.html#fetchIrisNodeInfo">fetchIrisNodeInfo</a></li><li><a href="global.html#fetchIrisStakingParameters">fetchIrisStakingParameters</a></li><li><a href="global.html#fetchIrisTxByHash">fetchIrisTxByHash</a></li><li><a href="global.html#fetchIrisValidatorCandidates">fetchIrisValidatorCandidates</a></li><li><a href="global.html#getCosmosAddressFromPubkey">getCosmosAddressFromPubkey</a></li><li><a href="global.html#getIrisAddressFromPubkey">getIrisAddressFromPubkey</a></li><li><a href="global.html#getLedgerAddressOnly">getLedgerAddressOnly</a></li><li><a href="global.html#getLedgerCosmosVersion">getLedgerCosmosVersion</a></li><li><a href="global.html#getLedgerPubKey">getLedgerPubKey</a></li><li><a href="global.html#pollLedgerDevice">pollLedgerDevice</a></li><li><a href="global.html#postSignedTx">postSignedTx</a></li><li><a href="global.html#processCosmosGovernanceProposals">processCosmosGovernanceProposals</a></li><li><a href="global.html#processIrisGovernanceProposals">processIrisGovernanceProposals</a></li><li><a href="global.html#queryCosmosProposals">queryCosmosProposals</a></li><li><a href="global.html#queryIrisProposals">queryIrisProposals</a></li><li><a href="global.html#requestWrapper">requestWrapper</a></li><li><a href="global.html#SET_COSMOS_ADDRESS">SET_COSMOS_ADDRESS</a></li><li><a href="global.html#SET_COSMOS_PROPOSALS">SET_COSMOS_PROPOSALS</a></li><li><a href="global.html#SET_CURRENT_PROPOSAL">SET_CURRENT_PROPOSAL</a></li><li><a href="global.html#SET_IRIS_ADDRESS">SET_IRIS_ADDRESS</a></li><li><a href="global.html#SET_IRIS_PROPOSALS">SET_IRIS_PROPOSALS</a></li><li><a href="global.html#SET_LEDGER_STATUS">SET_LEDGER_STATUS</a></li><li><a href="global.html#setCurrentProposal">setCurrentProposal</a></li><li><a href="global.html#signMsg">signMsg</a></li><li><a href="global.html#withdrawAllRewards">withdrawAllRewards</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 29 2020 12:21:45 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

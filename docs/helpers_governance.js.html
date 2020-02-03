@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: helpers/governance.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: helpers/governance.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * These helper functions take the raw responses from the respective API
+ * and parse the (structurally varied) responses into a standardized object
+ * This allows for abstraction of the chain since the parsed proposal
+ * objects are now the same structure
+ */
+
+/**
+ * @function processCosmosGovernanceProposals
+ * @param  {array of object} val
+ * @description parses the raw api response and returns the results
+ */
+export const processCosmosGovernanceProposals = async (val) => {
+  try {
+    const processedProposals = [];
+    const proposals = JSON.parse(JSON.stringify(val));
+
+    proposals.forEach((proposal) => {
+      const y = parseFloat(proposal.final_tally_result.yes);
+      const a = parseFloat(proposal.final_tally_result.abstain);
+      const n = parseFloat(proposal.final_tally_result.no);
+      const v = parseFloat(proposal.final_tally_result.no_with_veto);
+      const total = (y + a + n + v);
+
+      const yP = y / total;
+      const aP = a / total;
+      const nP = n / total;
+      const vP = v / total;
+
+      const parsedTally = {
+        yes: y,
+        abstain: a,
+        no: n,
+        no_with_veto: v,
+        total,
+        yes_percent: yP,
+        abstain_percent: aP,
+        no_percent: nP,
+        no_with_veto_percent: vP,
+      };
+      const donutValues = [yP, nP, aP, vP];
+      const donutPercentValues = [100 * yP, 100 * nP, 100 * aP, 100 * vP];
+
+      processedProposals.push({
+        id: proposal.id,
+        title: proposal.content.value.title,
+        description: proposal.content.value.description,
+        status: proposal.proposal_status,
+        tally: parsedTally,
+        submit_time: proposal.submit_time,
+        deposit_end_time: proposal.deposit_end_time,
+        voting_start_time: proposal.voting_start_time,
+        voting_end_time: proposal.voting_end_time,
+        total_deposit: proposal.total_deposit,
+        donutValues,
+        donutPercentValues,
+      });
+    });
+
+    return processedProposals;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+
+/**
+ * @function processIrisGovernanceProposals
+ * @param  {array of object} val
+ * @description parses the raw api response and returns the results
+ */
+export const processIrisGovernanceProposals = async (val) => {
+  try {
+    const processedProposals = [];
+    const proposals = JSON.parse(JSON.stringify(val));
+
+    proposals.forEach((proposal) => {
+      const y = parseFloat(proposal.value.BasicProposal.tally_result.yes);
+      const a = parseFloat(proposal.value.BasicProposal.tally_result.abstain);
+      const n = parseFloat(proposal.value.BasicProposal.tally_result.no);
+      const v = parseFloat(proposal.value.BasicProposal.tally_result.no_with_veto);
+      const total = (y + a + n + v);
+
+      const yP = y / total;
+      const aP = a / total;
+      const nP = n / total;
+      const vP = v / total;
+      const donutValues = [yP, nP, aP, vP];
+      const donutPercentValues = [100 * yP, 100 * nP, 100 * aP, 100 * vP];
+
+      const parsedTally = {
+        yes: y,
+        abstain: a,
+        no: n,
+        no_with_veto: v,
+        total,
+        yes_percent: yP,
+        abstain_percent: aP,
+        no_percent: nP,
+        no_with_veto_percent: vP,
+      };
+
+      processedProposals.push({
+        id: proposal.value.BasicProposal.proposal_id,
+        title: proposal.value.BasicProposal.title,
+        description: proposal.value.BasicProposal.description,
+        status: proposal.value.BasicProposal.proposal_status,
+        tally: parsedTally,
+        submit_time: proposal.value.BasicProposal.submit_time,
+        deposit_end_time: proposal.value.BasicProposal.deposit_end_time,
+        voting_start_time: proposal.value.BasicProposal.voting_start_time,
+        voting_end_time: proposal.value.BasicProposal.voting_end_time,
+        total_deposit: proposal.value.BasicProposal.total_deposit,
+        donutValues,
+        donutPercentValues,
+      });
+    });
+
+    return processedProposals;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+// -------- RAW COSMOS PROPOSAL ------------
+
+// {
+//   "type": "irishub/gov/ParameterProposal",
+//   "value": {
+//     "BasicProposal": {
+//       "proposal_id": "1",
+//       "title": "Raising the difficulty level for Validators",
+//       "description": "Now that the mainnet has been running for three months, keyss time to raise the difficulty level a little bit! More details can be found here: https://forum.irisnet.org/t/parameter-changes-raising-the-difficulty-level-a-little-bit-for-validators/127",
+//       "proposal_type": "ParameterChange",
+//       "proposal_status": "Passed",
+//       "tally_result": {
+//         "yes": "503291018.7266195192",
+//         "abstain": "0.0000000000",
+//         "no": "5031635.1210000000",
+//         "no_with_veto": "0.0000000000"
+//       },
+//       "submit_time": "2019-07-02T05:50:46.408707608Z",
+//       "deposit_end_time": "2019-07-03T05:50:46.408707608Z",
+//       "total_deposit": [
+//         {
+//           "denom": "iris-atto",
+//           "amount": "2020000000000000000000"
+//         }
+//       ],
+//       "voting_start_time": "2019-07-02T12:06:55.770994064Z",
+//       "voting_end_time": "2019-07-07T12:06:55.770994064Z"
+//     },
+//     "params": [
+//       {
+//         "subspace": "slashing",
+//         "key": "MinSignedPerWindow",
+//         "value": "0.7"
+//       },
+//       {
+//         "subspace": "slashing",
+//         "key": "DowntimeJailDuration",
+//         "value": "36h"
+//       },
+//       {
+//         "subspace": "slashing",
+//         "key": "SlashFractionDowntime",
+//         "value": "0.0003"
+//       }
+//     ]
+//   }
+// }
+
+// -------- RAW IRIS PROPOSAL ------------
+// {
+//   "proposal_content": {
+//     "type": "gov/TextProposal",
+//     "value": {
+//       "title": "Adjustment of blocks_per_year to come aligned with actual block time",
+//       "description": "This governance proposal is for adjustment of blocks_per_year parameter to normalize the inflation rate and reward rate.\\n ipfs link: https://ipfs.io/ipfs/QmXqEBr56xeUzFpgjsmDKMSit3iqnKaDEL4tabxPXoz9xc"
+//     }
+//   },
+//   "proposal_id": "1",
+//   "proposal_status": "Passed",
+//   "final_tally_result": {
+//     "yes": "97118903526799",
+//     "abstain": "402380577234",
+//     "no": "320545400000",
+//     "no_with_veto": "0"
+//   },
+//   "submit_time": "2019-03-20T06:41:27.040075748Z",
+//   "deposit_end_time": "2019-04-03T06:41:27.040075748Z",
+//   "total_deposit": [
+//     {
+//       "denom": "uatom",
+//       "amount": "512100000"
+//     }
+//   ],
+//   "voting_start_time": "2019-03-20T20:43:59.630492307Z",
+//   "voting_end_time": "2019-04-03T20:43:59.630492307Z"
+// }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beginDelegation">beginDelegation</a></li><li><a href="global.html#beginIrisDelegation">beginIrisDelegation</a></li><li><a href="global.html#beginRedelegation">beginRedelegation</a></li><li><a href="global.html#beginUnbonding">beginUnbonding</a></li><li><a href="global.html#buildSignSendCosmosTx">buildSignSendCosmosTx</a></li><li><a href="global.html#checkIrisTxStatus">checkIrisTxStatus</a></li><li><a href="global.html#CLEAR_IRIS_ACCOUNT">CLEAR_IRIS_ACCOUNT</a></li><li><a href="global.html#connectLedger">connectLedger</a></li><li><a href="global.html#enrichAccounts">enrichAccounts</a></li><li><a href="global.html#enrichCosmosAddress">enrichCosmosAddress</a></li><li><a href="global.html#enrichCosmosAddresses">enrichCosmosAddresses</a></li><li><a href="global.html#enrichIrisAddresses">enrichIrisAddresses</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#fetchCosmosAccountAuthInfo">fetchCosmosAccountAuthInfo</a></li><li><a href="global.html#fetchCosmosAccountBalance">fetchCosmosAccountBalance</a></li><li><a href="global.html#fetchCosmosAddressDelegations">fetchCosmosAddressDelegations</a></li><li><a href="global.html#fetchCosmosAddressDelegationTxHistory">fetchCosmosAddressDelegationTxHistory</a></li><li><a href="global.html#fetchCosmosAddressUnbondingDelegations">fetchCosmosAddressUnbondingDelegations</a></li><li><a href="global.html#fetchCosmosDelegateValidatorRewards">fetchCosmosDelegateValidatorRewards</a></li><li><a href="global.html#fetchCosmosDelegationRewards">fetchCosmosDelegationRewards</a></li><li><a href="global.html#fetchCosmosDelegationUnbondingTxs">fetchCosmosDelegationUnbondingTxs</a></li><li><a href="global.html#fetchCosmosGovernanceProposals">fetchCosmosGovernanceProposals</a></li><li><a href="global.html#fetchCosmosGovProposalVotesByProposalId">fetchCosmosGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchCosmosLatestBlock">fetchCosmosLatestBlock</a></li><li><a href="global.html#fetchCosmosStakingParameters">fetchCosmosStakingParameters</a></li><li><a href="global.html#fetchCosmosTxByHash">fetchCosmosTxByHash</a></li><li><a href="global.html#fetchCosmosValidatorSet">fetchCosmosValidatorSet</a></li><li><a href="global.html#fetchGovernanceProposals">fetchGovernanceProposals</a></li><li><a href="global.html#fetchIrisAccountAuthInfo">fetchIrisAccountAuthInfo</a></li><li><a href="global.html#fetchIrisAccountBalance">fetchIrisAccountBalance</a></li><li><a href="global.html#fetchIrisAddressDelegationHistory">fetchIrisAddressDelegationHistory</a></li><li><a href="global.html#fetchIrisAddressDelegations">fetchIrisAddressDelegations</a></li><li><a href="global.html#fetchIrisAddressUnbondingDelegations">fetchIrisAddressUnbondingDelegations</a></li><li><a href="global.html#fetchIrisDelegateValidatorRewards">fetchIrisDelegateValidatorRewards</a></li><li><a href="global.html#fetchIrisGovernanceProposals">fetchIrisGovernanceProposals</a></li><li><a href="global.html#fetchIrisGovProposalVotesByProposalId">fetchIrisGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchIrisLatestBlock">fetchIrisLatestBlock</a></li><li><a href="global.html#fetchIrisNodeInfo">fetchIrisNodeInfo</a></li><li><a href="global.html#fetchIrisStakingParameters">fetchIrisStakingParameters</a></li><li><a href="global.html#fetchIrisTxByHash">fetchIrisTxByHash</a></li><li><a href="global.html#fetchIrisValidatorCandidates">fetchIrisValidatorCandidates</a></li><li><a href="global.html#getCosmosAddressFromPubkey">getCosmosAddressFromPubkey</a></li><li><a href="global.html#getIrisAddressFromPubkey">getIrisAddressFromPubkey</a></li><li><a href="global.html#getLedgerAddressOnly">getLedgerAddressOnly</a></li><li><a href="global.html#getLedgerCosmosVersion">getLedgerCosmosVersion</a></li><li><a href="global.html#getLedgerPubKey">getLedgerPubKey</a></li><li><a href="global.html#pollLedgerDevice">pollLedgerDevice</a></li><li><a href="global.html#postSignedTx">postSignedTx</a></li><li><a href="global.html#processCosmosGovernanceProposals">processCosmosGovernanceProposals</a></li><li><a href="global.html#processIrisGovernanceProposals">processIrisGovernanceProposals</a></li><li><a href="global.html#queryCosmosProposals">queryCosmosProposals</a></li><li><a href="global.html#queryIrisProposals">queryIrisProposals</a></li><li><a href="global.html#requestWrapper">requestWrapper</a></li><li><a href="global.html#SET_COSMOS_ADDRESS">SET_COSMOS_ADDRESS</a></li><li><a href="global.html#SET_COSMOS_PROPOSALS">SET_COSMOS_PROPOSALS</a></li><li><a href="global.html#SET_CURRENT_PROPOSAL">SET_CURRENT_PROPOSAL</a></li><li><a href="global.html#SET_IRIS_ADDRESS">SET_IRIS_ADDRESS</a></li><li><a href="global.html#SET_IRIS_PROPOSALS">SET_IRIS_PROPOSALS</a></li><li><a href="global.html#SET_LEDGER_STATUS">SET_LEDGER_STATUS</a></li><li><a href="global.html#setCurrentProposal">setCurrentProposal</a></li><li><a href="global.html#signMsg">signMsg</a></li><li><a href="global.html#withdrawAllRewards">withdrawAllRewards</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 29 2020 12:21:45 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

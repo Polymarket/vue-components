@@ -1,0 +1,10 @@
+user=TokenUnion
+project=union-marketplace-icf-grant
+author=false
+issues=true
+exclude-labels=duplicate,question,invalid,wontfix,release
+bugs-label=**Fixed Bugs:**
+bug-labels=kind/bug
+enhancement-label=**Enhancements:**
+enhancement-labels=kind/enhancement,kind/feature
+

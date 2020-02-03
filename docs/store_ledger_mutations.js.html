@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: store/ledger/mutations.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: store/ledger/mutations.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>export function SET_APP(state, app) {
+  state.ledgerApp = Object.assign({}, JSON.parse(JSON.stringify(app)));
+}
+
+export function SET_LEDGER_APP_INFO(state, val) {
+  state.version = `${val.major}.${val.minor}.${val.patch}`;
+  state.locked = val.device_locked;
+  state.test_mode = val.test_mode;
+  state.detected = true;
+}
+
+
+/**
+ * @function SET_COSMOS_ADDRESS
+ * @description sets a given Cosmos address within the state
+ *              differs from SET_COSMOS_ACCOUNT as this is only
+ *              setting the address (used in getAddressModal)
+ */
+export function SET_COSMOS_ADDRESS(state, val) {
+  state.address.cosmos = val;
+}
+
+/**
+ * @function SET_IRIS_ADDRESS
+ * @description sets a given Iris address within the state
+ *              differs from SET_IRIS_ACCOUNT as this is only
+ *              setting the address (used in getAddressModal)
+ */
+export function SET_IRIS_ADDRESS(state, val) {
+  state.address.iris = val;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beginDelegation">beginDelegation</a></li><li><a href="global.html#beginIrisDelegation">beginIrisDelegation</a></li><li><a href="global.html#beginRedelegation">beginRedelegation</a></li><li><a href="global.html#beginUnbonding">beginUnbonding</a></li><li><a href="global.html#buildSignSendCosmosTx">buildSignSendCosmosTx</a></li><li><a href="global.html#checkIrisTxStatus">checkIrisTxStatus</a></li><li><a href="global.html#CLEAR_IRIS_ACCOUNT">CLEAR_IRIS_ACCOUNT</a></li><li><a href="global.html#connectLedger">connectLedger</a></li><li><a href="global.html#enrichAccounts">enrichAccounts</a></li><li><a href="global.html#enrichCosmosAddress">enrichCosmosAddress</a></li><li><a href="global.html#enrichCosmosAddresses">enrichCosmosAddresses</a></li><li><a href="global.html#enrichIrisAddresses">enrichIrisAddresses</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#fetchCosmosAccountAuthInfo">fetchCosmosAccountAuthInfo</a></li><li><a href="global.html#fetchCosmosAccountBalance">fetchCosmosAccountBalance</a></li><li><a href="global.html#fetchCosmosAddressDelegations">fetchCosmosAddressDelegations</a></li><li><a href="global.html#fetchCosmosAddressDelegationTxHistory">fetchCosmosAddressDelegationTxHistory</a></li><li><a href="global.html#fetchCosmosAddressUnbondingDelegations">fetchCosmosAddressUnbondingDelegations</a></li><li><a href="global.html#fetchCosmosDelegateValidatorRewards">fetchCosmosDelegateValidatorRewards</a></li><li><a href="global.html#fetchCosmosDelegationRewards">fetchCosmosDelegationRewards</a></li><li><a href="global.html#fetchCosmosDelegationUnbondingTxs">fetchCosmosDelegationUnbondingTxs</a></li><li><a href="global.html#fetchCosmosGovernanceProposals">fetchCosmosGovernanceProposals</a></li><li><a href="global.html#fetchCosmosGovProposalVotesByProposalId">fetchCosmosGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchCosmosLatestBlock">fetchCosmosLatestBlock</a></li><li><a href="global.html#fetchCosmosStakingParameters">fetchCosmosStakingParameters</a></li><li><a href="global.html#fetchCosmosTxByHash">fetchCosmosTxByHash</a></li><li><a href="global.html#fetchCosmosValidatorSet">fetchCosmosValidatorSet</a></li><li><a href="global.html#fetchGovernanceProposals">fetchGovernanceProposals</a></li><li><a href="global.html#fetchIrisAccountAuthInfo">fetchIrisAccountAuthInfo</a></li><li><a href="global.html#fetchIrisAccountBalance">fetchIrisAccountBalance</a></li><li><a href="global.html#fetchIrisAddressDelegationHistory">fetchIrisAddressDelegationHistory</a></li><li><a href="global.html#fetchIrisAddressDelegations">fetchIrisAddressDelegations</a></li><li><a href="global.html#fetchIrisAddressUnbondingDelegations">fetchIrisAddressUnbondingDelegations</a></li><li><a href="global.html#fetchIrisDelegateValidatorRewards">fetchIrisDelegateValidatorRewards</a></li><li><a href="global.html#fetchIrisGovernanceProposals">fetchIrisGovernanceProposals</a></li><li><a href="global.html#fetchIrisGovProposalVotesByProposalId">fetchIrisGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchIrisLatestBlock">fetchIrisLatestBlock</a></li><li><a href="global.html#fetchIrisNodeInfo">fetchIrisNodeInfo</a></li><li><a href="global.html#fetchIrisStakingParameters">fetchIrisStakingParameters</a></li><li><a href="global.html#fetchIrisTxByHash">fetchIrisTxByHash</a></li><li><a href="global.html#fetchIrisValidatorCandidates">fetchIrisValidatorCandidates</a></li><li><a href="global.html#getCosmosAddressFromPubkey">getCosmosAddressFromPubkey</a></li><li><a href="global.html#getIrisAddressFromPubkey">getIrisAddressFromPubkey</a></li><li><a href="global.html#getLedgerAddressOnly">getLedgerAddressOnly</a></li><li><a href="global.html#getLedgerCosmosVersion">getLedgerCosmosVersion</a></li><li><a href="global.html#getLedgerPubKey">getLedgerPubKey</a></li><li><a href="global.html#pollLedgerDevice">pollLedgerDevice</a></li><li><a href="global.html#postSignedTx">postSignedTx</a></li><li><a href="global.html#processCosmosGovernanceProposals">processCosmosGovernanceProposals</a></li><li><a href="global.html#processIrisGovernanceProposals">processIrisGovernanceProposals</a></li><li><a href="global.html#queryCosmosProposals">queryCosmosProposals</a></li><li><a href="global.html#queryIrisProposals">queryIrisProposals</a></li><li><a href="global.html#requestWrapper">requestWrapper</a></li><li><a href="global.html#SET_COSMOS_ADDRESS">SET_COSMOS_ADDRESS</a></li><li><a href="global.html#SET_COSMOS_PROPOSALS">SET_COSMOS_PROPOSALS</a></li><li><a href="global.html#SET_CURRENT_PROPOSAL">SET_CURRENT_PROPOSAL</a></li><li><a href="global.html#SET_IRIS_ADDRESS">SET_IRIS_ADDRESS</a></li><li><a href="global.html#SET_IRIS_PROPOSALS">SET_IRIS_PROPOSALS</a></li><li><a href="global.html#SET_LEDGER_STATUS">SET_LEDGER_STATUS</a></li><li><a href="global.html#setCurrentProposal">setCurrentProposal</a></li><li><a href="global.html#signMsg">signMsg</a></li><li><a href="global.html#withdrawAllRewards">withdrawAllRewards</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 29 2020 12:21:45 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
