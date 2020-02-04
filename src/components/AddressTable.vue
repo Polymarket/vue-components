@@ -180,7 +180,6 @@ export default {
       account.delegations.forEach((delegation) => {
         if (delegation.shares > 0) {
           total += parseFloat(delegation.shares);
-          console.log(delegation);
         }
       });
       return total;
@@ -201,9 +200,8 @@ export default {
       }
       return res.description.moniker;
     },
-    claimRewards(delegation) {
-      console.log(delegation);
-    },
+    // claimRewards(delegation) {
+    // },
   },
 };
 </script>

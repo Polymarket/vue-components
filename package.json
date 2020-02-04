@@ -9,6 +9,7 @@
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
+    "lint:markdown": "markdownlint --config markdownlintrc.json",
     "start": "quasar dev",
     "build": "quasar build",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
@@ -45,7 +46,8 @@
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-vue": "^5.0.0",
-    "jsdoc": "^3.6.3"
+    "jsdoc": "^3.6.3",
+    "markdownlint-cli": "^0.21.0"
   },
   "engines": {
     "node": ">= 10.18.1",
