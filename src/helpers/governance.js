@@ -7,7 +7,6 @@
 
 /**
  * @function processCosmosGovernanceProposals
- * @param  {array of object} val
  * @description parses the raw api response and returns the results
  */
 export const processCosmosGovernanceProposals = async (val) => {
@@ -66,7 +65,6 @@ export const processCosmosGovernanceProposals = async (val) => {
 
 /**
  * @function processIrisGovernanceProposals
- * @param  {array of object} val
  * @description parses the raw api response and returns the results
  */
 export const processIrisGovernanceProposals = async (val) => {
