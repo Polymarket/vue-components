@@ -17,20 +17,19 @@
           Ledger Vue Components
         </q-toolbar-title>
 
-        <q-separator
-          dark
-          vertical
-        />
         <LedgerDropdown />
-        <q-separator
-          dark
-          vertical
-        />
         <q-btn
           flat
           round
           icon="dynamic_feed"
           @click="rightDrawer = !rightDrawer"
+        />
+        <q-btn
+          flat
+          round
+          dense
+          icon="language"
+          @click="showNetworkSelectionSheet"
         />
       </q-toolbar>
     </q-header>
@@ -50,8 +49,8 @@
       </q-tabs> -->
 
     <!-- (Optional) The Footer -->
-    <!-- <q-footer> -->
-    <!-- <q-tabs switch-indicator>
+    <q-footer>
+      <!-- <q-tabs switch-indicator>
         <q-route-tab
           icon="map"
           to="/your/route"
@@ -66,7 +65,7 @@
         />
       </q-tabs> -->
 
-    <!-- <q-toolbar>
+      <!-- <q-toolbar>
         <q-btn
           flat
           round
@@ -78,7 +77,7 @@
           Footer
         </q-toolbar-title>
       </q-toolbar> -->
-    <!-- </q-footer> -->
+    </q-footer>
 
     <ComponentsListDrawer v-show="leftDrawer" />
     <MessageDrawer v-show="rightDrawer" />
@@ -93,16 +92,23 @@
           position="bottom-left"
           :scroll-offset="150"
           :offset="[18, 18]"
-        > -->
-        <!-- <q-btn
+        >
+          <q-btn
             fab
             icon="keyboard_arrow_up"
             color="white"
             text-color="secondary"
-          /> -->
-        <!-- </q-page-scroller> -->
+          />
+          <q-btn
+            fab
+            icon="keyboard_arrow_up"
+            color="white"
+            text-color="secondary"
+          />
+        </q-page-scroller> -->
       </q-page-container>
     </transition>
+    <NetworkSelectionSheet />
   </q-layout>
 </template>
 
@@ -134,6 +140,11 @@ export default {
       set(val) {
         this.$store.dispatch('session/toggleRightDrawer', val);
       },
+    },
+  },
+  methods: {
+    showNetworkSelectionSheet() {
+      this.$store.dispatch('session/toggleNetworkSheet');
     },
   },
 };
