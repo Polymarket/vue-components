@@ -1,19 +1,20 @@
 <template>
-  <div class="q-pa-md row items-start q-gutter-md">
+  <div class="q-ma-xs row items-start q-gutter-xs">
     <q-card
+      style="width: 100%; max-width: 600px"
       bordered
-      class="text-secondary q-ma-lg q-pa-none shadow-11"
+      class="text-secondary q-ma-xs q-pa-none shadow-11"
     >
       <q-card-section>
         <div class="text-h6 q-ma-sm">
           {{ proposal.id }} - {{ proposal.title }} ({{ proposal.status }})
         </div>
-        <div class="row no-wrap items-center">
-          <span class="text-grey-8 q-ma-md">{{ proposal.description }}</span>
-        </div>
       </q-card-section>
 
-      <GovernanceCardTabPanel :proposal="proposal" />
+      <GovernanceCardTabPanel
+        :proposal="proposal"
+        style="height: 400px"
+      />
       <q-separator />
       <q-card-actions class="q-ma-md">
         <q-btn

@@ -8,6 +8,10 @@
       class="text-primary"
     >
       <q-tab
+        label="Description"
+        name="description"
+      />
+      <q-tab
         label="Results"
         name="tally"
       />
@@ -23,6 +27,16 @@
     <q-separator />
     <q-card-section>
       <q-tab-panels v-model="tab">
+        <q-tab-panel name="description">
+          <q-scroll-area
+            s
+            class="q-ma-none"
+          >
+            <div class="text-grey-8 items-center">
+              {{ proposal.description }}
+            </div>
+          </q-scroll-area>
+        </q-tab-panel>
         <q-tab-panel name="tally">
           <GovTallyChart :proposal="proposal" />
         </q-tab-panel>
