@@ -62,8 +62,8 @@ module.exports = function (ctx) {
       scopeHoisting: true,
       vueRouterMode: 'history', // available values: 'hash', 'history'
       showProgress: true,
-      gzip: false,
-      analyze: false,
+      gzip: true,
+      analyze: true,
       // Options below are automatically set depending on the env, set them if you want to override
       preloadChunks: true,
       extractCSS: true,
@@ -103,8 +103,8 @@ module.exports = function (ctx) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'Cosmos Ledger Vue Components',
-        short_name: 'Cosmos Ledger Vue Components',
+        name: 'Ledger Vue Components',
+        short_name: 'Ledger Vue Components',
         description: 'A collection of vue components for delegating, redelegating, claiming rewards, voting, and other actions using a Ledger HW device',
         display: 'standalone',
         orientation: 'portrait',
