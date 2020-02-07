@@ -1,7 +1,7 @@
 export default {
   govProposals: {
-    Cosmos: [{}],
-    Irisnet: [{}],
+    cosmos: [{}],
+    iris: [{}],
   },
   // cosmosProposals: [ {} ],
   // irisProposals: [ {} ],

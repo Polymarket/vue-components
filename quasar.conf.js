@@ -10,6 +10,7 @@ module.exports = function (ctx) {
       'i18n',
       'axios',
       'graphql',
+      'apex',
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -48,7 +49,9 @@ module.exports = function (ctx) {
       directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: [
+        'BottomSheet',
+      ],
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie

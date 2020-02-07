@@ -21,9 +21,15 @@
         <q-btn
           flat
           round
-          dense
           icon="dynamic_feed"
           @click="rightDrawer = !rightDrawer"
+        />
+        <q-btn
+          flat
+          round
+          dense
+          icon="language"
+          @click="showNetworkSelectionSheet"
         />
       </q-toolbar>
     </q-header>
@@ -73,8 +79,8 @@
       </q-toolbar> -->
     </q-footer>
 
-    <ComponentsListDrawer />
-    <MessageDrawer />
+    <ComponentsListDrawer v-show="leftDrawer" />
+    <MessageDrawer v-show="rightDrawer" />
     <transition
       appear
       enter-active-class="animated fadeIn"
@@ -82,7 +88,7 @@
     >
       <q-page-container>
         <router-view />
-        <q-page-scroller
+        <!-- <q-page-scroller
           position="bottom-left"
           :scroll-offset="150"
           :offset="[18, 18]"
@@ -93,9 +99,16 @@
             color="white"
             text-color="secondary"
           />
-        </q-page-scroller>
+          <q-btn
+            fab
+            icon="keyboard_arrow_up"
+            color="white"
+            text-color="secondary"
+          />
+        </q-page-scroller> -->
       </q-page-container>
     </transition>
+    <NetworkSelectionSheet />
   </q-layout>
 </template>
 
@@ -127,6 +140,11 @@ export default {
       set(val) {
         this.$store.dispatch('session/toggleRightDrawer', val);
       },
+    },
+  },
+  methods: {
+    showNetworkSelectionSheet() {
+      this.$store.dispatch('session/toggleNetworkSheet');
     },
   },
 };
