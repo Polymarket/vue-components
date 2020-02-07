@@ -1,13 +1,36 @@
 <template>
   <q-page padding>
-    Governance
+    <div class="q-pa-md row items-start q-gutter-md">
+      <GovProposalContainer
+        v-for="(proposal, index) in activeNetworkProposals"
+        :key="index"
+        :proposal="proposal"
+      />
+    </div>
   </q-page>
 </template>
 
 <script>
+import GovProposalContainer from '../components/governance/GovProposalContainer';
+
 export default {
   name: 'Governance',
-  mounted() {
+  components: {
+    GovProposalContainer,
+  },
+  computed: {
+    activeNetwork: {
+      get() {
+        return this.$store.state.session.network;
+      },
+    },
+    activeNetworkProposals: {
+      get() {
+        return this.$store.state.governance.govProposals[this.activeNetwork];
+      },
+    },
+  },
+  beforeMount() {
     this.fetchGovernanceData();
   },
   methods: {
