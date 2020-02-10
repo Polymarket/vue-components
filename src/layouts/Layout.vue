@@ -108,7 +108,6 @@
         </q-page-scroller> -->
       </q-page-container>
     </transition>
-    <NetworkSelectionSheet />
   </q-layout>
 </template>
 

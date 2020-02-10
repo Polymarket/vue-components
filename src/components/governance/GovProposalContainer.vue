@@ -1,47 +1,37 @@
 <template>
-  <div class="q-pa-md row items-start q-gutter-md">
-    <q-card
-      bordered
-      class="text-secondary q-ma-lg q-pa-none shadow-11"
-    >
-      <q-card-section>
-        <div class="text-h6 q-ma-sm">
-          {{ proposal.id }} - {{ proposal.title }} ({{ proposal.status }})
-        </div>
-        <div class="row no-wrap items-center">
-          <span class="text-grey-8 q-ma-md">{{ proposal.description }}</span>
-        </div>
-      </q-card-section>
+  <q-card
+    style="width: 100%;"
+    bordered
+    class="text-secondary q-ma-xs q-pa-none shadow-11"
+  >
+    <q-card-section>
+      <div class="text-h6 q-mx-sm">
+        {{ proposal.id }} - {{ proposal.title }} ({{ proposal.status }})
+      </div>
+    </q-card-section>
 
-      <GovernanceCardTabPanel :proposal="proposal" />
-      <q-separator />
-      <q-card-actions class="q-ma-md">
-        <q-btn
-          color="secondary"
-          text-color="primary"
-          class="q-pa-sm"
-        >
-          Vote
-        </q-btn>
-        <q-btn
-          color="secondary"
-          text-color="primary"
-          class="q-pa-sm"
-        >
-          Deposit
-        </q-btn>
-        <q-btn
-          color="secondary"
-          text-color="primary"
-          class="q-pa-sm"
-        >
-          New Proposal
-        </q-btn>
-      </q-card-actions>
-    </q-card>
-  </div>
-  <!-- </q-card-section> -->
-  <!-- <q-list class="q-ma-md">
+    <GovernanceCardTabPanel
+      :proposal="proposal"
+    />
+    <q-separator />
+    <q-card-actions class="q-pa-md">
+      <q-btn
+        color="secondary"
+        text-color="primary"
+        class="q-pa-sm"
+      >
+        Vote
+      </q-btn>
+      <q-btn
+        color="secondary"
+        text-color="primary"
+        class="q-pa-sm"
+      >
+        Deposit
+      </q-btn>
+    </q-card-actions>
+    <!-- </q-card-section> -->
+    <!-- <q-list class="q-ma-md">
         <q-item>
           <q-item-section avatar>
             <q-icon
@@ -51,7 +41,10 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Yes</q-item-label>
-            <q-item-label caption>
+            <q-item-label caption>      <q-tab
+        label="Votes"
+        name="votes"
+      />
               {{ asPercent(proposal.tally.yes_percent) }}
             </q-item-label>
           </q-item-section>
@@ -99,6 +92,7 @@
           </q-item-section>
         </q-item>
       </q-list> -->
+  </q-card>
 </template>
 
 <script>
