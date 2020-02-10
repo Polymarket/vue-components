@@ -1,8 +1,8 @@
 {
-  "name": "cosmos-ledger-vue",
+  "name": "vue-components",
   "version": "0.0.1",
   "description": "A collection of vue components for delegating, redelegating, claiming rewards, voting, and other actions using a Ledger HW device",
-  "productName": "Cosmos Ledger Vue Components",
+  "productName": "Ledger Vue Components",
   "cordovaId": "",
   "capacitorId": "",
   "author": "dev@union.market",

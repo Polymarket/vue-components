@@ -1,5 +1,5 @@
 user=TokenUnion
-project=union-marketplace-icf-grant
+project=vue-components
 author=false
 issues=true
 exclude-labels=duplicate,question,invalid,wontfix,release
