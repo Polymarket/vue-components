@@ -1,11 +1,16 @@
 <template>
   <q-page padding>
-    <!-- content -->
+    <DelegationEntry />
   </q-page>
 </template>
 
 <script>
+import DelegationEntry from '../components/DelegationEntry';
+
 export default {
-  // name: 'PageName',
+  name: 'Delegation',
+  components: {
+    DelegationEntry,
+  },
 };
 </script>

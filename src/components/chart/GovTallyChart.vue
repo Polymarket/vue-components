@@ -1,8 +1,7 @@
 <template>
-  <div class="q-mx-xl q-my-md">
+  <div>
     <apexchart
       type="donut"
-      height="275"
       :options="chartOptions"
       :series="series"
     />

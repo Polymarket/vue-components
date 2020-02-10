@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 import session from './session';
 import ledger from './ledger';
 import governance from './governance';
+import delegation from './delegation';
 import iris from './iris';
 import cosmos from './cosmos';
 
@@ -24,6 +25,7 @@ export default function (/* { ssrContext } */) {
       session,
       ledger,
       governance,
+      delegation,
       iris,
       cosmos,
     },
