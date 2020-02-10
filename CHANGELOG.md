@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased](https://github.com/TokenUnion/union-marketplace-icf-grant/tree/HEAD)
+
+[Full Changelog](https://github.com/TokenUnion/union-marketplace-icf-grant/compare/v0.0.4...HEAD)
+
+**Closed issues:**
+
+- Vue Iris Ledger Check Address Component [\#7](https://github.com/TokenUnion/union-marketplace-icf-grant/issues/7)
+- Vue Cosmos Ledger Check Address Component [\#4](https://github.com/TokenUnion/union-marketplace-icf-grant/issues/4)
+
+**Merged pull requests:**
+
+- Governance Integration [\#15](https://github.com/TokenUnion/union-marketplace-icf-grant/pull/15)
+
 ## [v0.0.4](https://github.com/TokenUnion/union-marketplace-icf-grant/tree/v0.0.4) (2020-02-03)
 
 [Full Changelog](https://github.com/TokenUnion/union-marketplace-icf-grant/compare/v0.0.3...v0.0.4)
