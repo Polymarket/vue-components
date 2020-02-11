@@ -108,6 +108,7 @@
         </q-page-scroller> -->
       </q-page-container>
     </transition>
+    <LedgerStepsContainer />
   </q-layout>
 </template>
 
@@ -116,12 +117,16 @@ import ComponentsListDrawer from '../components/drawer/ComponentsListDrawer';
 import MessageDrawer from '../components/drawer/MessageDrawer';
 import LedgerDropdown from '../components/LedgerDropdown';
 
+import LedgerStepsContainer from '../components/LedgerStepsContainer';
+
+
 export default {
   name: 'Layout',
   components: {
     ComponentsListDrawer,
     MessageDrawer,
     LedgerDropdown,
+    LedgerStepsContainer,
   },
   computed: {
     leftDrawer: {

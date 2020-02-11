@@ -8,7 +8,7 @@
       class="text-primary"
     >
       <q-tab
-        label="Description"
+        label="Info"
         name="description"
       />
       <q-tab
@@ -18,6 +18,11 @@
       <q-tab
         label="Timeline"
         name="timeline"
+      />
+      <q-tab
+        v-if="proposal.votes"
+        label="Votes"
+        name="votes"
       />
     </q-tabs>
     <q-separator />
@@ -36,6 +41,12 @@
         <q-tab-panel name="timeline">
           <GovProposalCalendarList :proposal="proposal" />
         </q-tab-panel>
+        <q-tab-panel
+          v-if="proposal.votes"
+          name="votes"
+        >
+          <GovProposalVotesList :votes="proposal.votes" />
+        </q-tab-panel>
       </q-tab-panels>
     </q-card-section>
   </div>
@@ -45,12 +56,15 @@
 <script>
 import GovTallyChart from '../chart/GovTallyChart';
 import GovProposalCalendarList from './GovProposalCalendarList';
+import GovProposalVotesList from './GovProposalVotesList';
+
 
 export default {
   name: 'GovernanceCardTabPanel',
   components: {
     GovTallyChart,
     GovProposalCalendarList,
+    GovProposalVotesList,
   },
   props: {
     proposal: {

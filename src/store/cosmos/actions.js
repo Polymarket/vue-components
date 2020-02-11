@@ -15,6 +15,8 @@ import {
   COSMOSGAS,
   LEDGER_UNBOND_MEMO,
   LEDGER_REWARDCLAIM_MEMO,
+  LEDGER_VOTE_MEMO,
+  GAIA,
 } from '../../config/delegation';
 
 
@@ -109,6 +111,100 @@ export const beginRedelegation = async ({
  * @description creates unbonding transaction, awaits signature, sends to network
  */
 export const beginUnbonding = async ({
+  rootState,
+  dispatch,
+}) => {
+  try {
+    // Delegate message (same for unbonding)
+    const msg = {
+      validator_addr: rootState.delegation.delegationConfig.delegateAddress,
+      amount: {
+        denom: UATOM,
+        amount: rootState.delegation.delegationParams.amount,
+      },
+    };
+
+    // Delegate request (change type to undelegate for unbonding / un-delegating)
+    const request = {
+      chain_id: COSMOSHUB,
+      from: rootState.delegation.delegationParams.selectedAccount.address,
+      account_number:
+        rootState.delegation.delegationParams.selectedAccount.account_number,
+      sequence: rootState.delegation.delegationParams.selectedAccount.sequence,
+      fees: {
+        denom: UATOM,
+        amount: COSMOSFEEAMOUNT,
+      },
+      gas: COSMOSGAS,
+      memo: LEDGER_UNBOND_MEMO,
+      type: 'undelegate',
+      msg,
+    };
+    if (msg.validator_src_addr === msg.validator_dst_addr) {
+      throw new Error('A redelegation transaction to the same validator will fail.');
+    }
+
+    dispatch('buildSignSendCosmosTx', request);
+  } catch (e) {
+    dispatch('errorMessage', e.toString());
+  }
+};
+
+
+/**
+ * @function govVote
+ */
+export const govVote = async ({
+  rootState,
+  dispatch,
+}) => {
+  try {
+    // Delegate message (same for unbonding)
+    const msg = {
+      proposal_id: rootState.delegation.delegationConfig.delegateAddress,
+      voter: 'asdf',
+      option: 'Yes',
+    };
+
+    // Delegate request (change type to undelegate for unbonding / un-delegating)
+    const request = {
+      chain_id: GAIA,
+      from: rootState.delegation.delegationParams.selectedAccount.address,
+      account_number:
+        rootState.delegation.delegationParams.selectedAccount.account_number,
+      sequence: rootState.delegation.delegationParams.selectedAccount.sequence,
+      fees: {
+        denom: 'umuon',
+        amount: COSMOSFEEAMOUNT,
+      },
+      gas: COSMOSGAS,
+      memo: LEDGER_VOTE_MEMO,
+      type: 'vote',
+      msg,
+    };
+
+    dispatch('buildSignSendCosmosTx', request);
+  } catch (e) {
+    dispatch('errorMessage', e.toString());
+  }
+};
+
+
+// message MsgDeposit {
+//   required int64 proposalID = 1;
+//   required bytes depositor = 2;
+//   repeated Coin amount = 3;
+// }
+
+// message MsgVote {
+//   required int64 proposalID = 1;
+//   required bytes voter = 2;
+//   required uint64 option = 3;
+// }
+/**
+ * @function govDeposit
+ */
+export const govDeposit = async ({
   rootState,
   dispatch,
 }) => {

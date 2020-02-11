@@ -22,6 +22,24 @@ export function SET_DONE_LOADING(state, val) {
 export function SET_NETWORK(state, val) {
   state.network = val;
 }
+export function SET_NETWORK_NAME(state, val) {
+  state.networkName = val;
+}
+
+export function SHOW_STEPS_CONTAINER(state) {
+  state.stepsContainerVisible = true;
+}
+export function HIDE_STEPS_CONTAINER(state) {
+  state.stepsContainerVisible = false;
+}
+
+
+export function SHOW_LEDGER_VOTE_STEPS(state) {
+  state.ledgerVoteStepsVisible = true;
+}
+export function HIDE_LEDGER_VOTE_STEPS(state) {
+  state.ledgerVoteStepsVisible = false;
+}
 
 export function TOGGLE_REDELEGATION_STEPS(state) {
   state.redelegationStepsVisible = !state.redelegationStepsVisible;

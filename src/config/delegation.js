@@ -25,7 +25,7 @@ export const METAMASK = 'Meta Mask';
 
 export const COSMOSHUB = 'cosmoshub-3';
 export const IRISHUB = 'irishub';
-export const GAIA = 'gaia-13006';
+export const GAIA = 'gaia-13007';
 export const NYANCAT = 'nyancat-3';
 
 export const UATOM = 'uatom';
@@ -43,3 +43,4 @@ export const LEDGER_DELEGATE_MEMO = 'Delegated using Ledger via Union.Market';
 export const LEDGER_REDELEGATE_MEMO = 'Redelegated using Ledger via Union.Market';
 export const LEDGER_REWARDCLAIM_MEMO = 'Rewards claimed using Ledger via Union.Market';
 export const LEDGER_UNBOND_MEMO = 'Unbonded using Ledger via Union.Market';
+export const LEDGER_VOTE_MEMO = 'Voted using Ledger via Union.Market';

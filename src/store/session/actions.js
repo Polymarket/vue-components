@@ -18,19 +18,23 @@ export const toggleNetworkSheet = async ({ commit }) => {
         label: 'Cosmos',
         img: 'statics/logos/cosmos.svg',
         id: 'cosmos',
+        meta: 'Cosmos',
       },
       {
         label: 'Irisnet',
         img: 'statics/logos/irisnet.svg',
         id: 'iris',
+        meta: 'Irisnet',
       },
       {
         label: 'Kava',
         img: 'statics/logos/kava.svg',
         id: 'kava',
+        meta: 'Kava',
       },
     ],
   }).onOk((action) => {
+    commit('SET_NETWORK_NAME', action.meta);
     commit('SET_NETWORK', action.id);
     commit('ADD_LOG_MESSAGE', `Now connected to ${action.id}`);
   }).onCancel(() => {
@@ -63,4 +67,11 @@ export const logError = async ({ commit }, payload) => {
     message: payload,
   };
   commit('ADD_LOG_MESSAGE', log);
+};
+
+export const showLedgerVoteSteps = async ({ commit }) => {
+  commit('SHOW_LEDGER_VOTE_STEPS');
+};
+export const showStepContainer = async ({ commit }) => {
+  commit('SHOW_STEPS_CONTAINER');
 };

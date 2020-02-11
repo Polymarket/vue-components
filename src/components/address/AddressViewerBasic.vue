@@ -45,6 +45,7 @@
             </q-item-section>
           </q-item>
         </q-list>
+
         <q-separator />
 
         <q-card-actions>
@@ -53,7 +54,7 @@
             :disabled="buttonEnabled"
             @click="getLedgerAddress"
           >
-            {{ buttonText }}
+            {{ addressButtonText }}
           </q-btn>
         </q-card-actions>
       </q-card-section>
@@ -65,7 +66,7 @@
 import { mapState } from 'vuex';
 
 export default {
-  name: 'AddressViewer',
+  name: 'AddressViewerBasic',
   data() {
     return {};
   },
@@ -81,7 +82,7 @@ export default {
       }
       return true;
     },
-    buttonText() {
+    addressButtonText() {
       if (this.detected === true && this.locked === false) {
         return 'View Your Address';
       } if (this.detected === true && this.locked === true) {

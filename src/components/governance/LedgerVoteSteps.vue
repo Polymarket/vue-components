@@ -56,6 +56,7 @@
         icon="assignment"
         disable
       >
+        true
         This step won't show up because it is disabled.
       </q-step>
 
@@ -88,9 +89,11 @@
 
 <script>
 export default {
-  // name: 'ComponentName',
+  name: 'LedgerVoteSteps',
   data() {
-    return {};
+    return {
+      step: 1,
+    };
   },
 };
 </script>
