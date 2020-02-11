@@ -4,38 +4,11 @@
     style="max-width: 500px"
   >
     <div class="q-gutter-md">
-      <q-select
-        v-model="selectedValidator"
-
-        :options="cosmos_cosmosproviders"
-        label="Validator"
-        clearable
-        hint="Select a validator for delegation"
-        color="white"
-        standout
-        outlined
-        text-color="white"
-      />
+      <DelegationValidatorSelect />
 
 
-      <q-input
-        v-model="amount"
-        dark
-        outlined
-        bottom-slots
-      >
-        <template v-slot:hint>
-          Delegation Amount
-        </template>
-      </q-input>
-      <q-btn
-        text-color="white"
-        dark
-        :disabled="disabled"
-        outline
-        label="Delegate"
-        @click="beginDelegation()"
-      />
+      <DelegationAmountInput />
+      <BeginDelegationButton />
     </div>
   </div>
   <!-- <div
@@ -45,11 +18,7 @@
     <div
       class="self-center no-outline"
       tabindex="0"
-    >
-      <q-select
-        v-model="selectedValidator"
-        :optons="validators"
-        dark
+    >BeginDelegationDelegationAmountInputButton
         filled
         label="Single"
         style="width: 250px"
@@ -136,62 +105,25 @@
   </div> -->
 </template>
 <script>
-
-import gql from 'graphql-tag';
-
-const validators = gql`
-  query {
-  cosmos_cosmosproviders {
-    value: address
-    operator_address: address
-    description: union_score
-    label: provider_name
-  }
-}`;
+import BeginDelegationButton from '../../components/delegation/BeginDelegationButton';
+import DelegationAmountInput from '../../components/delegation/DelegationAmountInput';
+import DelegationValidatorSelect from '../../components/delegation/DelegationValidatorSelect';
 
 export default {
-  apollo: {
-    cosmos_cosmosproviders: {
-      query: validators,
-    },
+  components: {
+    BeginDelegationButton,
+    DelegationAmountInput,
+    DelegationValidatorSelect,
   },
 
 
   // name: 'ComponentName',
   data() {
     return {
-      cosmos_cosmosproviders: [{}],
     };
   },
-  computed: {
-    selectedValidator: {
-      get() {
-        return this.$store.state.delegation.targetValidator;
-      },
-      set(val) {
-        this.$store.commit('delegation/SET_TARGET_VALIDATOR', val);
-      },
-    },
-    amount: {
-      get() {
-        return this.$store.state.delegation.amount;
-      },
-      set(val) {
-        this.$store.commit('delegation/SET_AMOUNT', val);
-      },
-    },
-    disabled() {
-      if (this.selectedValidator !== null && parseFloat(this.amount) > 0) {
-        return false;
-      }
-      return true;
-    },
-  },
-  methods: {
-    beginDelegation() {
-      this.$store.dispatch('delegation/beginDelegation', parseFloat(this.amount));
-    },
-  },
+
+
 };
 </script>
 

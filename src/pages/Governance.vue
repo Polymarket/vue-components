@@ -1,6 +1,9 @@
 <template>
   <q-page padding>
-    <div class="q-pa-sm row items-start q-gutter-xs">
+    <div
+
+      class="q-pa-sm row items-start q-gutter-xs"
+    >
       <GovProposalContainer
         v-for="(proposal, index) in activeNetworkProposals"
         :key="index"
@@ -34,8 +37,8 @@ export default {
     this.fetchGovernanceData();
   },
   methods: {
-    fetchGovernanceData() {
-      this.$store.dispatch('governance/fetchGovernanceProposals');
+    async fetchGovernanceData() {
+      await this.$store.dispatch('governance/fetchGovernanceProposals');
     },
   },
 };

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import DelegationEntry from '../components/DelegationEntry';
+import DelegationEntry from '../components/delegation/DelegationEntry';
 
 export default {
   name: 'Delegation',

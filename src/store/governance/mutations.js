@@ -2,14 +2,14 @@
  * @function SET_COSMOS_PROPOSALS
  */
 export function SET_COSMOS_PROPOSALS(state, val) {
-  Object.assign(state.govProposals.cosmos, val);
+  state.govProposals.cosmos = Object.assign({}, val);
 }
 
 /**
  * @function SET_IRIS_PROPOSALS
  */
 export function SET_IRIS_PROPOSALS(state, val) {
-  Object.assign(state.govProposals.iris, val);
+  state.govProposals.iris = Object.assign({}, val);
 }
 
 /**
