@@ -43,6 +43,8 @@ import {
   COSMOSGAS,
   LEDGER_UNBOND_MEMO,
   LEDGER_REWARDCLAIM_MEMO,
+  LEDGER_VOTE_MEMO,
+  GAIA,
 } from '../../config/delegation';
 
 
@@ -178,6 +180,162 @@ export const beginUnbonding = async ({
 
 
 /**
+ * @function govVote
+ */
+export const govVote = async ({
+  rootState,
+  dispatch,
+}) => {
+  try {
+    // Delegate message (same for unbonding)
+    const msg = {
+      proposal_id: rootState.delegation.delegationConfig.delegateAddress,
+      voter: 'asdf',
+      option: 'Yes',
+    };
+
+    // Delegate request (change type to undelegate for unbonding / un-delegating)
+    const request = {
+      chain_id: GAIA,
+      from: rootState.delegation.delegationParams.selectedAccount.address,
+      account_number:
+        rootState.delegation.delegationParams.selectedAccount.account_number,
+      sequence: rootState.delegation.delegationParams.selectedAccount.sequence,
+      fees: {
+        denom: 'umuon',
+        amount: COSMOSFEEAMOUNT,
+      },
+      gas: COSMOSGAS,
+      memo: LEDGER_VOTE_MEMO,
+      type: 'vote',
+      msg,
+    };
+
+    dispatch('buildSignSendCosmosTx', request);
+  } catch (e) {
+    dispatch('errorMessage', e.toString());
+  }
+};
+
+
+/**
+ * @function buildSignSendCosmosTx
+ * @description Constructs the transaction, sends to ledger for signature, and sends to network
+ * @param  {Object} request   {the raw transaction request for the Msg type to build}
+ */
+export const buildSignSendCosmosTx = async ({ rootState, dispatch }, request) => {
+  try {
+    const builder = Irisnet.getBuilder('cosmos');
+    const accountHDPATH = rootState.ledger.HDPATH;
+
+    // create a stdTx from the request object
+    const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
+
+    // get the portions of the tx to sign
+    const signBytes = stdTx.GetSignBytes();
+
+    // get the signatures from a ledger signing action
+    const sigs = await signMsg(accountHDPATH, signBytes);
+
+    // get the portion of the stdTx for attaching signature(s)
+    const txData = stdTx.GetData();
+
+    // attach signatures
+    txData.tx.signatures = sigs;
+
+
+    // send tx to node
+    const txResponse = await postCosmosSignedTx(txData);
+    console.log(txResponse);
+    // commit('ledger/SET_TX_HASH', txResponse.data.txhash, {
+    //   root: true,
+    // });
+    // if (txResponse.data.logs[0].success === true) {
+    //   commit('delegation/SET_ACTIVE_DELEGATION_PROMPT', 'TxSuccessPrompt', {
+    //     root: true,
+    //   });
+    // } else {
+    //   dispatch(
+    //     'delegation/toggleLoadingModal', {
+    //       visible: true,
+    //       header: '',
+    //       footer: 'Broadcasting signed transaction to the network..',
+    //     }, {
+    //       root: true,
+    //     },
+    //   );
+
+    //   const delay = 30000;
+
+    //   setTimeout(() => {
+    //     dispatch(
+    //       'checkCosmosTxStatus',
+    //     );
+    //   }, delay);
+    // }
+  } catch (e) {
+    dispatch('session/logError', e, { root: true });
+  } finally {
+    dispatch('session/logDelegationRecord', null, { root: true });
+  }
+};
+
+// message MsgDeposit {
+//   required int64 proposalID = 1;
+//   required bytes depositor = 2;
+//   repeated Coin amount = 3;
+// }
+
+// message MsgVote {
+//   required int64 proposalID = 1;
+//   required bytes voter = 2;
+//   required uint64 option = 3;
+// }
+/**
+ * @function govDeposit
+ */
+export const govDeposit = async ({
+  rootState,
+  dispatch,
+}) => {
+  try {
+    // Delegate message (same for unbonding)
+    const msg = {
+      validator_addr: rootState.delegation.delegationConfig.delegateAddress,
+      amount: {
+        denom: UATOM,
+        amount: rootState.delegation.delegationParams.amount,
+      },
+    };
+
+    // Delegate request (change type to undelegate for unbonding / un-delegating)
+    const request = {
+      chain_id: COSMOSHUB,
+      from: rootState.delegation.delegationParams.selectedAccount.address,
+      account_number:
+        rootState.delegation.delegationParams.selectedAccount.account_number,
+      sequence: rootState.delegation.delegationParams.selectedAccount.sequence,
+      fees: {
+        denom: UATOM,
+        amount: COSMOSFEEAMOUNT,
+      },
+      gas: COSMOSGAS,
+      memo: LEDGER_UNBOND_MEMO,
+      type: 'undelegate',
+      msg,
+    };
+    if (msg.validator_src_addr === msg.validator_dst_addr) {
+      throw new Error('A redelegation transaction to the same validator will fail.');
+    }
+
+    dispatch('buildSignSendCosmosTx', request);
+  } catch (e) {
+    dispatch('session/logError', e, { root: true });
+  }
+};
+
+
+/**
  * @function withdrawAllRewards
  * @description creates delegation transaction, awaits signature, sends to network
  */
@@ -239,66 +397,7 @@ export const withdrawAllRewards = async ({
     dispatch('errorMessage', e.toString());
   }
 };
-/**
- * @function buildSignSendCosmosTx
- * @description Constructs the transaction, sends to ledger for signature, and sends to network
- * @param  {Object} request   {the raw transaction request for the Msg type to build}
- */
-export const buildSignSendCosmosTx = async ({ rootState, dispatch, commit }, request) => {
-  try {
-    const builder = Irisnet.getBuilder('cosmos');
-    const accountHDPATH = rootState.delegation.delegationParams.selectedAccount.HDPATH;
 
-    // create a stdTx from the request object
-    const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
-
-    // get the portions of the tx to sign
-    const signBytes = stdTx.GetSignBytes();
-
-    // get the signatures from a ledger signing action
-    const sigs = await signMsg(accountHDPATH, signBytes);
-
-    // get the portion of the stdTx for attaching signature(s)
-    const txData = stdTx.GetData();
-
-    // attach signatures
-    txData.tx.signatures = sigs;
-
-
-    // send tx to node
-    const txResponse = await postCosmosSignedTx(txData);
-    commit('ledger/SET_TX_HASH', txResponse.data.txhash, {
-      root: true,
-    });
-    if (txResponse.data.logs[0].success === true) {
-      commit('delegation/SET_ACTIVE_DELEGATION_PROMPT', 'TxSuccessPrompt', {
-        root: true,
-      });
-    } else {
-      dispatch(
-        'delegation/toggleLoadingModal', {
-          visible: true,
-          header: '',
-          footer: 'Broadcasting signed transaction to the network..',
-        }, {
-          root: true,
-        },
-      );
-
-      const delay = 30000;
-
-      setTimeout(() => {
-        dispatch(
-          'checkCosmosTxStatus',
-        );
-      }, delay);
-    }
-  } catch (e) {
-    dispatch('errorMessage', e);
-  } finally {
-    dispatch('session/logDelegationRecord', null, { root: true });
-  }
-};
 
 export const checkCosmosTxStatus = async ({ rootState, commit, dispatch }) => {
   try {
@@ -344,13 +443,13 @@ export const checkCosmosTxStatus = async ({ rootState, commit, dispatch }) => {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beginDelegation">beginDelegation</a></li><li><a href="global.html#beginIrisDelegation">beginIrisDelegation</a></li><li><a href="global.html#beginRedelegation">beginRedelegation</a></li><li><a href="global.html#beginUnbonding">beginUnbonding</a></li><li><a href="global.html#buildSignSendCosmosTx">buildSignSendCosmosTx</a></li><li><a href="global.html#checkIrisTxStatus">checkIrisTxStatus</a></li><li><a href="global.html#CLEAR_IRIS_ACCOUNT">CLEAR_IRIS_ACCOUNT</a></li><li><a href="global.html#connectLedger">connectLedger</a></li><li><a href="global.html#enrichAccounts">enrichAccounts</a></li><li><a href="global.html#enrichCosmosAddress">enrichCosmosAddress</a></li><li><a href="global.html#enrichCosmosAddresses">enrichCosmosAddresses</a></li><li><a href="global.html#enrichIrisAddresses">enrichIrisAddresses</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#fetchCosmosAccountAuthInfo">fetchCosmosAccountAuthInfo</a></li><li><a href="global.html#fetchCosmosAccountBalance">fetchCosmosAccountBalance</a></li><li><a href="global.html#fetchCosmosAddressDelegations">fetchCosmosAddressDelegations</a></li><li><a href="global.html#fetchCosmosAddressDelegationTxHistory">fetchCosmosAddressDelegationTxHistory</a></li><li><a href="global.html#fetchCosmosAddressUnbondingDelegations">fetchCosmosAddressUnbondingDelegations</a></li><li><a href="global.html#fetchCosmosDelegateValidatorRewards">fetchCosmosDelegateValidatorRewards</a></li><li><a href="global.html#fetchCosmosDelegationRewards">fetchCosmosDelegationRewards</a></li><li><a href="global.html#fetchCosmosDelegationUnbondingTxs">fetchCosmosDelegationUnbondingTxs</a></li><li><a href="global.html#fetchCosmosGovernanceProposals">fetchCosmosGovernanceProposals</a></li><li><a href="global.html#fetchCosmosGovProposalVotesByProposalId">fetchCosmosGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchCosmosLatestBlock">fetchCosmosLatestBlock</a></li><li><a href="global.html#fetchCosmosStakingParameters">fetchCosmosStakingParameters</a></li><li><a href="global.html#fetchCosmosTxByHash">fetchCosmosTxByHash</a></li><li><a href="global.html#fetchCosmosValidatorSet">fetchCosmosValidatorSet</a></li><li><a href="global.html#fetchGovernanceProposals">fetchGovernanceProposals</a></li><li><a href="global.html#fetchIrisAccountAuthInfo">fetchIrisAccountAuthInfo</a></li><li><a href="global.html#fetchIrisAccountBalance">fetchIrisAccountBalance</a></li><li><a href="global.html#fetchIrisAddressDelegationHistory">fetchIrisAddressDelegationHistory</a></li><li><a href="global.html#fetchIrisAddressDelegations">fetchIrisAddressDelegations</a></li><li><a href="global.html#fetchIrisAddressUnbondingDelegations">fetchIrisAddressUnbondingDelegations</a></li><li><a href="global.html#fetchIrisDelegateValidatorRewards">fetchIrisDelegateValidatorRewards</a></li><li><a href="global.html#fetchIrisGovernanceProposals">fetchIrisGovernanceProposals</a></li><li><a href="global.html#fetchIrisGovProposalVotesByProposalId">fetchIrisGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchIrisLatestBlock">fetchIrisLatestBlock</a></li><li><a href="global.html#fetchIrisNodeInfo">fetchIrisNodeInfo</a></li><li><a href="global.html#fetchIrisStakingParameters">fetchIrisStakingParameters</a></li><li><a href="global.html#fetchIrisTxByHash">fetchIrisTxByHash</a></li><li><a href="global.html#fetchIrisValidatorCandidates">fetchIrisValidatorCandidates</a></li><li><a href="global.html#getCosmosAddressFromPubkey">getCosmosAddressFromPubkey</a></li><li><a href="global.html#getIrisAddressFromPubkey">getIrisAddressFromPubkey</a></li><li><a href="global.html#getLedgerAddressOnly">getLedgerAddressOnly</a></li><li><a href="global.html#getLedgerCosmosVersion">getLedgerCosmosVersion</a></li><li><a href="global.html#getLedgerPubKey">getLedgerPubKey</a></li><li><a href="global.html#pollLedgerDevice">pollLedgerDevice</a></li><li><a href="global.html#postSignedTx">postSignedTx</a></li><li><a href="global.html#processCosmosGovernanceProposals">processCosmosGovernanceProposals</a></li><li><a href="global.html#processIrisGovernanceProposals">processIrisGovernanceProposals</a></li><li><a href="global.html#queryCosmosProposals">queryCosmosProposals</a></li><li><a href="global.html#queryIrisProposals">queryIrisProposals</a></li><li><a href="global.html#requestWrapper">requestWrapper</a></li><li><a href="global.html#SET_COSMOS_ADDRESS">SET_COSMOS_ADDRESS</a></li><li><a href="global.html#SET_COSMOS_PROPOSALS">SET_COSMOS_PROPOSALS</a></li><li><a href="global.html#SET_CURRENT_PROPOSAL">SET_CURRENT_PROPOSAL</a></li><li><a href="global.html#SET_IRIS_ADDRESS">SET_IRIS_ADDRESS</a></li><li><a href="global.html#SET_IRIS_PROPOSALS">SET_IRIS_PROPOSALS</a></li><li><a href="global.html#SET_LEDGER_STATUS">SET_LEDGER_STATUS</a></li><li><a href="global.html#setCurrentProposal">setCurrentProposal</a></li><li><a href="global.html#signMsg">signMsg</a></li><li><a href="global.html#withdrawAllRewards">withdrawAllRewards</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beginDelegation">beginDelegation</a></li><li><a href="global.html#beginIrisDelegation">beginIrisDelegation</a></li><li><a href="global.html#beginRedelegation">beginRedelegation</a></li><li><a href="global.html#beginUnbonding">beginUnbonding</a></li><li><a href="global.html#buildSignSendCosmosTx">buildSignSendCosmosTx</a></li><li><a href="global.html#checkIrisTxStatus">checkIrisTxStatus</a></li><li><a href="global.html#connectLedger">connectLedger</a></li><li><a href="global.html#enrichCosmosAddresses">enrichCosmosAddresses</a></li><li><a href="global.html#enrichIrisAddresses">enrichIrisAddresses</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#fetchCosmosAccountAuthInfo">fetchCosmosAccountAuthInfo</a></li><li><a href="global.html#fetchCosmosAccountBalance">fetchCosmosAccountBalance</a></li><li><a href="global.html#fetchCosmosAddressDelegations">fetchCosmosAddressDelegations</a></li><li><a href="global.html#fetchCosmosAddressDelegationTxHistory">fetchCosmosAddressDelegationTxHistory</a></li><li><a href="global.html#fetchCosmosAddressUnbondingDelegations">fetchCosmosAddressUnbondingDelegations</a></li><li><a href="global.html#fetchCosmosDelegateValidatorRewards">fetchCosmosDelegateValidatorRewards</a></li><li><a href="global.html#fetchCosmosDelegationRewards">fetchCosmosDelegationRewards</a></li><li><a href="global.html#fetchCosmosDelegationUnbondingTxs">fetchCosmosDelegationUnbondingTxs</a></li><li><a href="global.html#fetchCosmosGovernanceProposals">fetchCosmosGovernanceProposals</a></li><li><a href="global.html#fetchCosmosGovProposalVotesByProposalId">fetchCosmosGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchCosmosLatestBlock">fetchCosmosLatestBlock</a></li><li><a href="global.html#fetchCosmosStakingParameters">fetchCosmosStakingParameters</a></li><li><a href="global.html#fetchCosmosTxByHash">fetchCosmosTxByHash</a></li><li><a href="global.html#fetchCosmosValidatorSet">fetchCosmosValidatorSet</a></li><li><a href="global.html#fetchGovernanceProposals">fetchGovernanceProposals</a></li><li><a href="global.html#fetchIrisAccountAuthInfo">fetchIrisAccountAuthInfo</a></li><li><a href="global.html#fetchIrisAccountBalance">fetchIrisAccountBalance</a></li><li><a href="global.html#fetchIrisAddressDelegationHistory">fetchIrisAddressDelegationHistory</a></li><li><a href="global.html#fetchIrisAddressDelegations">fetchIrisAddressDelegations</a></li><li><a href="global.html#fetchIrisAddressUnbondingDelegations">fetchIrisAddressUnbondingDelegations</a></li><li><a href="global.html#fetchIrisDelegateValidatorRewards">fetchIrisDelegateValidatorRewards</a></li><li><a href="global.html#fetchIrisGovernanceProposals">fetchIrisGovernanceProposals</a></li><li><a href="global.html#fetchIrisGovProposalVotesByProposalId">fetchIrisGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchIrisLatestBlock">fetchIrisLatestBlock</a></li><li><a href="global.html#fetchIrisNodeInfo">fetchIrisNodeInfo</a></li><li><a href="global.html#fetchIrisStakingParameters">fetchIrisStakingParameters</a></li><li><a href="global.html#fetchIrisTxByHash">fetchIrisTxByHash</a></li><li><a href="global.html#fetchIrisValidatorCandidates">fetchIrisValidatorCandidates</a></li><li><a href="global.html#getCosmosAddressFromPubkey">getCosmosAddressFromPubkey</a></li><li><a href="global.html#getIrisAddressFromPubkey">getIrisAddressFromPubkey</a></li><li><a href="global.html#getLedgerCosmosVersion">getLedgerCosmosVersion</a></li><li><a href="global.html#getLedgerPubKey">getLedgerPubKey</a></li><li><a href="global.html#govDeposit">govDeposit</a></li><li><a href="global.html#govVote">govVote</a></li><li><a href="global.html#pollLedgerDevice">pollLedgerDevice</a></li><li><a href="global.html#postSignedTx">postSignedTx</a></li><li><a href="global.html#processCosmosGovernanceProposals">processCosmosGovernanceProposals</a></li><li><a href="global.html#processIrisGovernanceProposals">processIrisGovernanceProposals</a></li><li><a href="global.html#queryCosmosProposals">queryCosmosProposals</a></li><li><a href="global.html#queryIrisProposals">queryIrisProposals</a></li><li><a href="global.html#requestWrapper">requestWrapper</a></li><li><a href="global.html#SET_COSMOS_ADDRESS">SET_COSMOS_ADDRESS</a></li><li><a href="global.html#SET_COSMOS_PROPOSALS">SET_COSMOS_PROPOSALS</a></li><li><a href="global.html#SET_IRIS_ADDRESS">SET_IRIS_ADDRESS</a></li><li><a href="global.html#SET_IRIS_PROPOSALS">SET_IRIS_PROPOSALS</a></li><li><a href="global.html#SET_VOTE_PROPOSAL">SET_VOTE_PROPOSAL</a></li><li><a href="global.html#setCurrentProposal">setCurrentProposal</a></li><li><a href="global.html#signMsg">signMsg</a></li><li><a href="global.html#vote">vote</a></li><li><a href="global.html#withdrawAllRewards">withdrawAllRewards</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Feb 10 2020 14:54:47 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Feb 12 2020 18:52:54 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
