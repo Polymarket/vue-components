@@ -20,7 +20,7 @@ export default {
   },
   data() {
     return {
-      series: this.proposal.donutValues,
+      series: this.proposal.donutPercentValues,
       chartOptions: {
         colors: ['#e9a1ab', '#222f3d', '#73797f', '#73797f'],
         fill: {

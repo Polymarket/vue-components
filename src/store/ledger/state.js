@@ -10,6 +10,7 @@ export default function () {
       cosmos: null,
       iris: null,
     },
+    account: {},
     transportChoice: 'WebUSB',
   };
 }

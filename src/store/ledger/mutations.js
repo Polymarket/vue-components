@@ -29,3 +29,7 @@ export function SET_COSMOS_ADDRESS(state, val) {
 export function SET_IRIS_ADDRESS(state, val) {
   state.address.iris = val;
 }
+
+export function SET_ACCOUNT(state, val) {
+  state.account = Object.assign({}, val);
+}

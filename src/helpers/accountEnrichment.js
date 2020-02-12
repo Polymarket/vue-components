@@ -124,12 +124,16 @@ export async function enrichIrisAccount(account) {
  */
 export const enrichCosmosAccount = async (account) => {
   try {
+    console.log('enriching cosmos account');
     // determine the account (bech32) from compressed_pk
     const address = createCosmosAddress(account.pubKey.compressed_pk);
 
     // make api calls to node to grab account details
     const accountAuth = await fetchCosmosAccountAuthInfo(address);
+    console.log(accountAuth);
+
     const accountDelegations = await fetchCosmosAddressDelegations(address);
+    console.log(accountDelegations);
 
     const accountUnbondingDelegations = await fetchCosmosAddressUnbondingDelegations(
       address,
@@ -209,7 +213,7 @@ export const enrichCosmosAccount = async (account) => {
 
     // set the balance mirror key value for delegation flow integrations
     userAccount.balance = userAccount.coins[0].amount;
-
+    console.log(userAccount);
     return userAccount;
   } catch (e) {
     throw new Error(e);

@@ -190,6 +190,68 @@ export const govVote = async ({
 };
 
 
+/**
+ * @function buildSignSendCosmosTx
+ * @description Constructs the transaction, sends to ledger for signature, and sends to network
+ * @param  {Object} request   {the raw transaction request for the Msg type to build}
+ */
+export const buildSignSendCosmosTx = async ({ rootState, dispatch }, request) => {
+  try {
+    const builder = Irisnet.getBuilder('cosmos');
+    const accountHDPATH = rootState.ledger.HDPATH;
+
+    // create a stdTx from the request object
+    const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
+
+    // get the portions of the tx to sign
+    const signBytes = stdTx.GetSignBytes();
+
+    // get the signatures from a ledger signing action
+    const sigs = await signMsg(accountHDPATH, signBytes);
+
+    // get the portion of the stdTx for attaching signature(s)
+    const txData = stdTx.GetData();
+
+    // attach signatures
+    txData.tx.signatures = sigs;
+
+
+    // send tx to node
+    const txResponse = await postCosmosSignedTx(txData);
+    console.log(txResponse);
+    // commit('ledger/SET_TX_HASH', txResponse.data.txhash, {
+    //   root: true,
+    // });
+    // if (txResponse.data.logs[0].success === true) {
+    //   commit('delegation/SET_ACTIVE_DELEGATION_PROMPT', 'TxSuccessPrompt', {
+    //     root: true,
+    //   });
+    // } else {
+    //   dispatch(
+    //     'delegation/toggleLoadingModal', {
+    //       visible: true,
+    //       header: '',
+    //       footer: 'Broadcasting signed transaction to the network..',
+    //     }, {
+    //       root: true,
+    //     },
+    //   );
+
+    //   const delay = 30000;
+
+    //   setTimeout(() => {
+    //     dispatch(
+    //       'checkCosmosTxStatus',
+    //     );
+    //   }, delay);
+    // }
+  } catch (e) {
+    dispatch('session/logError', e, { root: true });
+  } finally {
+    dispatch('session/logDelegationRecord', null, { root: true });
+  }
+};
+
 // message MsgDeposit {
 //   required int64 proposalID = 1;
 //   required bytes depositor = 2;
@@ -240,7 +302,7 @@ export const govDeposit = async ({
 
     dispatch('buildSignSendCosmosTx', request);
   } catch (e) {
-    dispatch('errorMessage', e.toString());
+    dispatch('session/logError', e, { root: true });
   }
 };
 
@@ -307,66 +369,7 @@ export const withdrawAllRewards = async ({
     dispatch('errorMessage', e.toString());
   }
 };
-/**
- * @function buildSignSendCosmosTx
- * @description Constructs the transaction, sends to ledger for signature, and sends to network
- * @param  {Object} request   {the raw transaction request for the Msg type to build}
- */
-export const buildSignSendCosmosTx = async ({ rootState, dispatch, commit }, request) => {
-  try {
-    const builder = Irisnet.getBuilder('cosmos');
-    const accountHDPATH = rootState.delegation.delegationParams.selectedAccount.HDPATH;
 
-    // create a stdTx from the request object
-    const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
-
-    // get the portions of the tx to sign
-    const signBytes = stdTx.GetSignBytes();
-
-    // get the signatures from a ledger signing action
-    const sigs = await signMsg(accountHDPATH, signBytes);
-
-    // get the portion of the stdTx for attaching signature(s)
-    const txData = stdTx.GetData();
-
-    // attach signatures
-    txData.tx.signatures = sigs;
-
-
-    // send tx to node
-    const txResponse = await postCosmosSignedTx(txData);
-    commit('ledger/SET_TX_HASH', txResponse.data.txhash, {
-      root: true,
-    });
-    if (txResponse.data.logs[0].success === true) {
-      commit('delegation/SET_ACTIVE_DELEGATION_PROMPT', 'TxSuccessPrompt', {
-        root: true,
-      });
-    } else {
-      dispatch(
-        'delegation/toggleLoadingModal', {
-          visible: true,
-          header: '',
-          footer: 'Broadcasting signed transaction to the network..',
-        }, {
-          root: true,
-        },
-      );
-
-      const delay = 30000;
-
-      setTimeout(() => {
-        dispatch(
-          'checkCosmosTxStatus',
-        );
-      }, delay);
-    }
-  } catch (e) {
-    dispatch('errorMessage', e);
-  } finally {
-    dispatch('session/logDelegationRecord', null, { root: true });
-  }
-};
 
 export const checkCosmosTxStatus = async ({ rootState, commit, dispatch }) => {
   try {

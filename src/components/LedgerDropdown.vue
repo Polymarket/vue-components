@@ -70,7 +70,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import LedgerConnectButton from './LedgerConnectButton';
+import LedgerConnectButton from './common/button/LedgerConnectButton';
 
 export default {
   name: 'LedgerDropdown',

@@ -13,9 +13,9 @@ export function SET_IRIS_PROPOSALS(state, val) {
 }
 
 /**
- * @function SET_CURRENT_PROPOSAL
- * @description sets the current proposal for the ProposalModal
+ * @function SET_VOTE_PROPOSAL
+ * @description sets the current proposal for voting
  */
-export function SET_CURRENT_PROPOSAL(state, val) {
-  state.currentProposal = val;
+export function SET_VOTE_PROPOSAL(state, val) {
+  state.voteProposal = Object.assign({}, val);
 }

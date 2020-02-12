@@ -1,19 +1,21 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
+  <div class="q-pa-none q-gutter-sm">
     <q-dialog
       v-model="visible"
-
       transition-show="flip-down"
       transition-hide="flip-up"
     >
-      <q-card>
-        <q-card-section class="row items-center q-pb-none">
+      <q-card
+        flat
+      >
+        <q-card-section class="row items-center q-pa-none">
           <!-- <div class="text-h6">
             Close icon
           </div> -->
           <!-- <q-space /> -->
           <q-btn
             v-close-popup
+            class="q-pa-sm"
             icon="close"
             flat
             round

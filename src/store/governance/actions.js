@@ -1,9 +1,13 @@
-import { fetchCosmosGovernanceProposals } from '../../services/cosmos/api';
+import Irisnet from 'irisnet-crypto';
+import { fetchCosmosGovernanceProposals, postCosmosSignedTx } from '../../services/cosmos/api';
 import { fetchIrisGovernanceProposals, fetchIrisGovProposalVotesByProposalId } from '../../services/iris/api';
 
 import {
-  COSMOSHUB, UATOM, COSMOSFEEAMOUNT, COSMOSGAS, LEDGER_VOTE_MEMO,
+  COSMOSFEEAMOUNT, COSMOSGAS, LEDGER_VOTE_MEMO,
+  // COSMOSHUB, UATOM, COSMOSFEEAMOUNT, COSMOSGAS, LEDGER_VOTE_MEMO,
 } from '../../config/delegation';
+
+import { signMsg } from '../../helpers/ledger';
 
 import {
   processIrisGovernanceProposals,
@@ -98,43 +102,70 @@ export const queryCosmosProposals = async ({ commit, dispatch }) => {
  * @param  {type} payload  {the proposal id for voting}
  * @description initiates the voting sequence for a governance proposal
  */
-export const vote = ({ rootState, dispatch }, payload) => {
+export const beginVoteTransaction = ({ commit, dispatch }, payload) => {
   try {
     dispatch('session/showStepContainer', null, { root: true });
     dispatch('session/showLedgerVoteSteps', null, { root: true });
-
-
-    // Delegate message (same for unbonding)
-    const msg = {
-      proposal_id: payload,
-      option: 'yes',
-      voter: '',
-    };
-
-
-    const address = rootState.ledger.address[rootState.network];
-    // Delegate request (change type to undelegate for unbonding / un-delegating)
-    const request = {
-      chain_id: COSMOSHUB,
-      from: address,
-      account_number:
-        rootState.delegation.delegationParams.selectedAccount.account_number,
-      sequence: rootState.delegation.delegationParams.selectedAccount.sequence,
-      fees: {
-        denom: UATOM,
-        amount: COSMOSFEEAMOUNT,
-      },
-      gas: COSMOSGAS,
-      memo: LEDGER_VOTE_MEMO,
-      type: 'vote',
-      msg,
-    };
-
-
-    dispatch('cosmos/buildSignSendCosmosTx', request, { root: true });
+    commit('SET_VOTE_PROPOSAL', payload);
   } catch (e) {
     dispatch('session/logError', e, { root: true });
   }
+};
+
+
+export const vote = async ({ state, rootState }, payload) => {
+  // Delegate message (same for unbonding)
+
+  console.log(payload);
+
+  const msg = {
+    proposal_id: state.voteProposal.id,
+    option: 0x01,
+    voter: rootState.ledger.account.address,
+  };
+
+  // Delegate request (change type to undelegate for unbonding / un-delegating)
+  const request = {
+    chain_id: 'gaia-13007',
+    from: rootState.ledger.account.address,
+    account_number: rootState.ledger.account.account_number,
+    sequence: rootState.ledger.account.sequence,
+    fees: {
+      denom: 'umuon',
+      amount: COSMOSFEEAMOUNT,
+    },
+    gas: COSMOSGAS,
+    memo: LEDGER_VOTE_MEMO,
+    type: 'vote',
+    msg,
+  };
+  console.log(request);
+
+
+  const builder = Irisnet.getBuilder('cosmos');
+  const accountHDPATH = rootState.ledger.HDPATH;
+
+  // create a stdTx from the request object
+  const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
+
+  // get the portions of the tx to sign
+  const signBytes = stdTx.GetSignBytes();
+
+  // get the signatures from a ledger signing action
+  const sigs = await signMsg(accountHDPATH, signBytes);
+
+  // get the portion of the stdTx for attaching signature(s)
+  const txData = stdTx.GetData();
+  console.log(txData);
+
+  // attach signatures
+  txData.tx.signatures = sigs;
+
+  console.log(sigs);
+
+  // send tx to node
+  const txResponse = await postCosmosSignedTx(txData);
+  console.log(txResponse);
 };
 
 
