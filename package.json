@@ -16,8 +16,8 @@
     "changelog": "sh scripts/changelog.sh"
   },
   "dependencies": {
-    "@ledgerhq/hw-transport-u2f": "^5.7.0",
-    "@ledgerhq/hw-transport-webusb": "^5.7.0",
+    "@ledgerhq/hw-transport-u2f": "^5.9.0",
+    "@ledgerhq/hw-transport-webusb": "^5.9.0",
     "@quasar/extras": "^1.5.1",
     "apexcharts": "^3.15.5",
     "apollo-cache-inmemory": "^1.6.5",
