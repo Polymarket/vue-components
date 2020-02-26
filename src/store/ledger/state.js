@@ -9,6 +9,8 @@ export default function () {
     address: {
       cosmos: null,
       iris: null,
+      kava: null,
+      terra: null,
     },
     account: {},
     transportChoice: 'WebUSB',

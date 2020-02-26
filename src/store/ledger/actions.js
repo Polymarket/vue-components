@@ -2,11 +2,15 @@ import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import TransportU2F from '@ledgerhq/hw-transport-u2f';
 import CosmosApp from 'ledger-cosmos-js';
 
-import { createCosmosAddress, createIrisAddress } from '../../helpers/wallet';
+import {
+  createCosmosAddress, createIrisAddress, createTerraAddress, createKavaAddress,
+} from '../../helpers/wallet';
 // import { enrichCosmosAccount, enrichIrisAccount } from '../../helpers/accountEnrichment';
 import {
   fetchCosmosAccountAuthInfo,
 } from '../../services/cosmos/api';
+
+
 /**
  * @function connectLedger
  * @description initiates a connection to a Ledger device, saves connection to the state,
@@ -27,7 +31,6 @@ export const connectLedger = async ({ state, commit, dispatch }) => {
     commit('SET_APP', ledgerApp);
 
     const response = await ledgerApp.getVersion();
-
     if (response.error_message !== 'No errors') {
       dispatch('session/logError', response.error_message, { root: true });
     } else {
@@ -57,10 +60,14 @@ export const viewLedgerAddress = async ({ commit, dispatch, state }) => {
 
     const irisAddress = createIrisAddress(pubKey.compressed_pk);
     const cosmosAddress = createCosmosAddress(pubKey.compressed_pk);
+    const kavaAddress = createKavaAddress(pubKey.compressed_pk);
+    const terraAddress = createTerraAddress(pubKey.compressed_pk);
 
     // Commit the enrichedAccounts to state
     commit('SET_IRIS_ADDRESS', irisAddress);
     commit('SET_COSMOS_ADDRESS', cosmosAddress);
+    commit('SET_KAVA_ADDRESS', kavaAddress);
+    commit('SET_TERRA_ADDRESS', terraAddress);
   } catch (e) {
     dispatch('session/logError', e, { root: true });
   }

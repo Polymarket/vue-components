@@ -26,3 +26,19 @@ export function createIrisAddress(publicKey) {
   const irisAddress = bech32ify(address, 'iaa');
   return irisAddress;
 }
+
+export function createTerraAddress(publicKey) {
+  const message = CryptoJS.enc.Hex.parse(publicKey.toString('hex'));
+  const hash = ripemd160(sha256(message)).toString();
+  const address = Buffer.from(hash, 'hex');
+  const irisAddress = bech32ify(address, 'terra');
+  return irisAddress;
+}
+
+export function createKavaAddress(publicKey) {
+  const message = CryptoJS.enc.Hex.parse(publicKey.toString('hex'));
+  const hash = ripemd160(sha256(message)).toString();
+  const address = Buffer.from(hash, 'hex');
+  const irisAddress = bech32ify(address, 'kava');
+  return irisAddress;
+}

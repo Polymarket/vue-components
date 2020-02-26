@@ -79,3 +79,13 @@ export function SET_VALIDATOR_CANDIDATES(state, payload) {
 export function SET_LAST_BLOCK(state, payload) {
   state.height = payload.block.header.height;
 }
+export function SET_LEDGER_TX_IN_PROGRESS(state, payload) {
+  state.ledgerTxInProgress = payload;
+}
+
+export function SET_LEDGER_TX_CURRENT_STEP(state, payload) {
+  state.ledgerTxCurrentStep.number = payload;
+}
+export function SET_LEDGER_TX_CURRENT_STEP_MESSAGE(state, payload) {
+  state.ledgerTxCurrentStep.optionalMsg = payload;
+}

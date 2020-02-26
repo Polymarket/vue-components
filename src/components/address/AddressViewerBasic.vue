@@ -9,38 +9,65 @@
         <div class="text-h7">
           Ledger Addresses
         </div>
-        <q-list
-          dense
-          class="q-ma-none q-pa-sm"
-        >
-          <q-item>
-            <q-item-section>
-              <q-item-label overline />
+        <q-list>
+          <q-item class="q-ma-sm q-pa-sm">
+            <q-item-section avatar>
+              <q-avatar rounded>
+                <img src="statics/logos/cosmos.svg">
+              </q-avatar>
             </q-item-section>
-          </q-item>
-
-          <q-item>
             <q-item-section>
+              <q-item-label>Cosmos</q-item-label>
               <q-item-label caption>
-                Cosmos
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-item-label caption>
-                {{ address.cosmos }}
+                <span class="text-weight-bold">{{ address.cosmos }}</span>
               </q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item>
+          <q-separator />
+
+          <q-item class="q-ma-sm q-pa-sm">
+            <q-item-section avatar>
+              <q-avatar rounded>
+                <img src="statics/logos/irisnet.svg">
+              </q-avatar>
+            </q-item-section>
             <q-item-section>
+              <q-item-label>Iris</q-item-label>
               <q-item-label caption>
-                Iris
+                <span class="text-weight-bold">{{ address.iris }}</span>
               </q-item-label>
             </q-item-section>
-            <q-item-section side>
+          </q-item>
+
+          <q-separator />
+
+          <q-item class="q-ma-sm q-pa-sm">
+            <q-item-section avatar>
+              <q-avatar rounded>
+                <img src="statics/logos/terra.svg">
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Terra</q-item-label>
               <q-item-label caption>
-                {{ address.iris }}
+                <span class="text-weight-bold">{{ address.terra }}</span>
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-separator />
+
+          <q-item class="q-ma-sm q-pa-sm">
+            <q-item-section avatar>
+              <q-avatar rounded>
+                <img src="statics/logos/kava.svg">
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Kava</q-item-label>
+              <q-item-label caption>
+                <span class="text-weight-bold">{{ address.kava }}</span>
               </q-item-label>
             </q-item-section>
           </q-item>

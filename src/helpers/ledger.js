@@ -96,13 +96,14 @@ export const signMsg = async (accountHDPATH, msg) => {
   try {
     const cosmosLedgerApp = await connectLedger();
 
-    const pubKey = await cosmosLedgerApp.publicKey(accountHDPATH);
+    const pubKey = await cosmosLedgerApp.publicKey([44, 118, 0, 0, 0]);
+    console.log([44, 118, 0, 0, 0], JSON.stringify(msg), pubKey);
     const res = await cosmosLedgerApp.sign(accountHDPATH, JSON.stringify(msg));
     const secp256k1Sig = secp256k1.signatureImport(res.signature);
 
     const signatures = [
       {
-        signature: secp256k1Sig.toString('base64'),
+        signature: Buffer.from(secp256k1Sig, 'hex').toString('base64'),
         account_number: msg.account_number,
         sequence: msg.sequence,
         pub_key: {

@@ -9,4 +9,9 @@ export default {
   stepsContainerVisible: false,
   ledgerVoteStepsVisible: false,
   messages: [],
+  ledgerTxInProgress: false,
+  ledgerTxCurrentStep: {
+    number: 1,
+    optionalMsg: '',
+  },
 };

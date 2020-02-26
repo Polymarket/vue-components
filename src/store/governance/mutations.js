@@ -19,3 +19,7 @@ export function SET_IRIS_PROPOSALS(state, val) {
 export function SET_VOTE_PROPOSAL(state, val) {
   state.voteProposal = Object.assign({}, val);
 }
+
+export function CLEAR_VOTE_PROPOSAL(state) {
+  state.voteProposal = Object.assign({});
+}

@@ -32,6 +32,12 @@ export const toggleNetworkSheet = async ({ commit }) => {
         id: 'kava',
         meta: 'Kava',
       },
+      {
+        label: 'Terra',
+        img: 'statics/logos/terra.svg',
+        id: 'terra',
+        meta: 'Terra',
+      },
     ],
   }).onOk((action) => {
     commit('SET_NETWORK_NAME', action.meta);
@@ -72,6 +78,26 @@ export const logError = async ({ commit }, payload) => {
 export const showLedgerVoteSteps = async ({ commit }) => {
   commit('SHOW_LEDGER_VOTE_STEPS');
 };
-export const showStepContainer = async ({ commit }) => {
+export const hideLedgerVoteSteps = async ({ commit }) => {
+  commit('HIDE_LEDGER_VOTE_STEPS');
+};
+
+
+export const hideStepsContainer = async ({ commit }) => {
+  commit('HIDE_STEPS_CONTAINER');
+};
+
+export const showStepsContainer = async ({ commit }) => {
   commit('SHOW_STEPS_CONTAINER');
+};
+
+export const setLedgerTxInProgress = async ({ commit }, payload) => {
+  commit('SET_LEDGER_TX_IN_PROGRESS', payload);
+};
+
+export const setLedgerTxCurrentStepNumber = async ({ commit }, payload) => {
+  commit('SET_LEDGER_TX_CURRENT_STEP', payload);
+};
+export const setLedgerTxCurrentStepOptionalMsg = async ({ commit }, payload) => {
+  commit('SET_LEDGER_TX_CURRENT_STEP_MESSAGE', payload);
 };

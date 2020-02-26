@@ -79,32 +79,21 @@ export const queryCosmosProposals = async ({ commit, dispatch }) => {
     const processedCosmosProposals = await processCosmosGovernanceProposals(
       cosmosProposals,
     );
-
-    // TODO: process the votes for each proposal
-
     commit('SET_COSMOS_PROPOSALS', processedCosmosProposals);
   } catch (e) {
     dispatch('session/logError', e, { root: true });
   }
 };
 
-/**
- * @function setCurrentProposal
- * @description sets the current proposal for purposes of rendering the ProposalModal
- */
-// export const setCurrentProposal = ({ commit }, payload) => {
-//   commit('SET_CURRENT_PROPOSAL', payload);
-// };
-
 
 /**
- * @function vote
+ * @function beginVoteTransaction
  * @param  {type} payload  {the proposal id for voting}
  * @description initiates the voting sequence for a governance proposal
  */
 export const beginVoteTransaction = ({ commit, dispatch }, payload) => {
   try {
-    dispatch('session/showStepContainer', null, { root: true });
+    dispatch('session/showStepsContainer', null, { root: true });
     dispatch('session/showLedgerVoteSteps', null, { root: true });
     commit('SET_VOTE_PROPOSAL', payload);
   } catch (e) {
@@ -112,60 +101,75 @@ export const beginVoteTransaction = ({ commit, dispatch }, payload) => {
   }
 };
 
+/**
+ * @function endVoteTransaction
+ * @description cleans up following a voting transaction.
+ */
+export const endVoteTransaction = ({ commit, dispatch }) => {
+  try {
+    dispatch('session/hideStepsContainer', null, { root: true });
+    dispatch('session/hideLedgerVoteSteps', null, { root: true });
+    dispatch('session/setLedgerTxInProgress', false, { root: true });
+    dispatch('session/setLedgerTxCurrentStepNumber', 1, { root: true });
+    dispatch('session/setLedgerTxCurrentStepOptionalMsg', '', { root: true });
+    commit('SET_VOTE_PROPOSAL', null);
+  } catch (e) {
+    dispatch('session/logError', e, { root: true });
+  }
+};
 
-export const vote = async ({ state, rootState }, payload) => {
+export const vote = async ({ state, rootState, dispatch }, payload) => {
   // Delegate message (same for unbonding)
+  try {
+    dispatch('session/setLedgerTxInProgress', true, { root: true });
 
-  console.log(payload);
+    const msg = {
+      proposal_id: state.voteProposal.id,
+      option: payload,
+      voter: rootState.ledger.account.address,
+    };
 
-  const msg = {
-    proposal_id: state.voteProposal.id,
-    option: 0x01,
-    voter: rootState.ledger.account.address,
-  };
+    // Delegate request (change type to undelegate for unbonding / un-delegating)
+    const request = {
+      chain_id: 'gaia-13007',
+      from: rootState.ledger.account.address,
+      account_number: rootState.ledger.account.account_number,
+      sequence: rootState.ledger.account.sequence,
+      fees: {
+        denom: 'umuon',
+        amount: COSMOSFEEAMOUNT,
+      },
+      gas: COSMOSGAS,
+      memo: LEDGER_VOTE_MEMO,
+      type: 'vote',
+      msg,
+    };
 
-  // Delegate request (change type to undelegate for unbonding / un-delegating)
-  const request = {
-    chain_id: 'gaia-13007',
-    from: rootState.ledger.account.address,
-    account_number: rootState.ledger.account.account_number,
-    sequence: rootState.ledger.account.sequence,
-    fees: {
-      denom: 'umuon',
-      amount: COSMOSFEEAMOUNT,
-    },
-    gas: COSMOSGAS,
-    memo: LEDGER_VOTE_MEMO,
-    type: 'vote',
-    msg,
-  };
-  console.log(request);
+    const builder = Irisnet.getBuilder('cosmos');
+    const accountHDPATH = rootState.ledger.HDPATH;
 
+    // create a stdTx from the request object
+    const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
 
-  const builder = Irisnet.getBuilder('cosmos');
-  const accountHDPATH = rootState.ledger.HDPATH;
+    // get the portions of the tx to sign
+    const signBytes = stdTx.GetSignBytes();
 
-  // create a stdTx from the request object
-  const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
+    const sigs = await signMsg(accountHDPATH, signBytes);
 
-  // get the portions of the tx to sign
-  const signBytes = stdTx.GetSignBytes();
+    // get the portion of the stdTx for attaching signature(s)
+    const txData = stdTx.GetData();
 
-  // get the signatures from a ledger signing action
-  const sigs = await signMsg(accountHDPATH, signBytes);
+    // attach signatures
+    txData.tx.signatures = sigs;
 
-  // get the portion of the stdTx for attaching signature(s)
-  const txData = stdTx.GetData();
-  console.log(txData);
+    // send tx to node
+    const txResponse = await postCosmosSignedTx(txData);
 
-  // attach signatures
-  txData.tx.signatures = sigs;
-
-  console.log(sigs);
-
-  // send tx to node
-  const txResponse = await postCosmosSignedTx(txData);
-  console.log(txResponse);
+    dispatch('session/setLedgerTxCurrentStepNumber', 4, { root: true });
+    dispatch('session/setLedgerTxCurrentStepOptionalMsg', txResponse.data, { root: true });
+  } catch (e) {
+    dispatch('session/logInfo', e, { root: true });
+  }
 };
 
 
