@@ -1,10 +1,11 @@
 <template>
   <div
-    class="q-pa-md"
-    style="max-width: 500px"
+    class="q-pa-xs"
+    style="max-width: 600px"
   >
-    <div class="q-gutter-md">
-      <DelegationValidatorSelect />
+    <!-- <div class="q-gutter-md"> -->
+    <div>
+      <ValidatorList />
 
 
       <DelegationAmountInput />
@@ -107,13 +108,13 @@
 <script>
 import BeginDelegationButton from '../../components/delegation/BeginDelegationButton';
 import DelegationAmountInput from '../../components/delegation/DelegationAmountInput';
-import DelegationValidatorSelect from '../../components/delegation/DelegationValidatorSelect';
+import ValidatorList from '../../components/delegation/ValidatorList';
 
 export default {
   components: {
     BeginDelegationButton,
     DelegationAmountInput,
-    DelegationValidatorSelect,
+    ValidatorList,
   },
 
 

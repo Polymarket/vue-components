@@ -4,13 +4,18 @@ import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 export default ({ Vue, app }) => {
-  const uri = 'https://hasura.union.market/v1/graphql';
+  const uri = 'http://35.245.40.76:8080/v1/graphql';
   const httpLink = new HttpLink({ uri });
+
+  const cache = new InMemoryCache({
+    addTypename: false,
+  });
+
 
   // Create the apollo client
   const defaultClient = new ApolloClient({
     link: httpLink,
-    cache: new InMemoryCache(),
+    cache,
     connectToDevTools: true,
   });
 
