@@ -42,7 +42,7 @@ export const IRISGAS = 50000;
 
 export const KAVAMAINNET = 'kava-2';
 export const KAVADENOM = 'ukava';
-export const KAVAFEEAMOUNT = 500000000000000000;
+export const KAVAFEEAMOUNT = 100;
 export const KAVAGAS = 90000;
 
 export const TERRAMAINNET = 'columbus-3';

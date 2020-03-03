@@ -19,22 +19,28 @@
 
     <h1 class="page-title">Source: store/ledger/actions.js</h1>
 
+    
 
 
 
-
-
+    
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import TransportU2F from '@ledgerhq/hw-transport-u2f';
 import CosmosApp from 'ledger-cosmos-js';
 
-import { createCosmosAddress, createIrisAddress } from '../../helpers/wallet';
-// import { enrichCosmosAccount, enrichIrisAccount } from '../../helpers/accountEnrichment';
 import {
-  fetchCosmosAccountAuthInfo,
-} from '../../services/cosmos/api';
+  createCosmosAddress, createIrisAddress, createTerraAddress, createKavaAddress,
+} from '../../helpers/wallet';
+import {
+  enrichIrisAccount, enrichKavaAccount, enrichTerraAccount,
+} from '../../helpers/accountEnrichment';
+// import {
+//   fetchCosmosAccountAuthInfo,
+// } from '../../services/api';
+
+
 /**
  * @function connectLedger
  * @description initiates a connection to a Ledger device, saves connection to the state,
@@ -55,7 +61,6 @@ export const connectLedger = async ({ state, commit, dispatch }) => {
     commit('SET_APP', ledgerApp);
 
     const response = await ledgerApp.getVersion();
-
     if (response.error_message !== 'No errors') {
       dispatch('session/logError', response.error_message, { root: true });
     } else {
@@ -85,10 +90,14 @@ export const viewLedgerAddress = async ({ commit, dispatch, state }) => {
 
     const irisAddress = createIrisAddress(pubKey.compressed_pk);
     const cosmosAddress = createCosmosAddress(pubKey.compressed_pk);
+    const kavaAddress = createKavaAddress(pubKey.compressed_pk);
+    const terraAddress = createTerraAddress(pubKey.compressed_pk);
 
     // Commit the enrichedAccounts to state
     commit('SET_IRIS_ADDRESS', irisAddress);
     commit('SET_COSMOS_ADDRESS', cosmosAddress);
+    commit('SET_KAVA_ADDRESS', kavaAddress);
+    commit('SET_TERRA_ADDRESS', terraAddress);
   } catch (e) {
     dispatch('session/logError', e, { root: true });
   }
@@ -111,29 +120,42 @@ export const getLedgerAccountDetails = async ({
 
     // create new CosmosApp Instance using ledger-cosmos-js
     const app = new CosmosApp(transport);
-    // const pubKey = await app.showAddressAndPubKey(state.HDPATH, 'cosmos');
-    // parse Ledger account for the first HDPATH
-    // parse Ledger account for the first HDPATH
     const pubKey = await app.publicKey(state.HDPATH);
+
+    const irisAddress = createIrisAddress(pubKey.compressed_pk);
+    const cosmosAddress = createCosmosAddress(pubKey.compressed_pk);
+    const kavaAddress = createKavaAddress(pubKey.compressed_pk);
+    const terraAddress = createTerraAddress(pubKey.compressed_pk);
+    commit('SET_IRIS_ADDRESS', irisAddress);
+    commit('SET_COSMOS_ADDRESS', cosmosAddress);
+    commit('SET_KAVA_ADDRESS', kavaAddress);
+    commit('SET_TERRA_ADDRESS', terraAddress);
+
     const account = {
       HDPATH: state.HDPATH,
       pubKey,
     };
-    console.log(account, pubKey);
-    const irisAddress = createIrisAddress(pubKey.compressed_pk);
-    const cosmosAddress = createCosmosAddress(pubKey.compressed_pk);
-    const accountInfo = await fetchCosmosAccountAuthInfo(cosmosAddress);
-    const userAccount = Object.assign({}, accountInfo.value);
-    userAccount.pubKey = pubKey.compressed_pk;
-    userAccount.HDPATH = state.HDPATH;
+    // console.log(account);
 
-    console.log(userAccount);
 
-    console.log(irisAddress, cosmosAddress);
-    // Commit the enrichedAccounts to state
-    commit('SET_IRIS_ADDRESS', irisAddress);
-    commit('SET_COSMOS_ADDRESS', cosmosAddress);
+    // console.log('fetching enriched accounts');
 
+    // const enrichedCosmosAccount = await enrichCosmosAccount(account);
+    // console.log(enrichedCosmosAccount);
+
+    const enrichedTerraAccount = await enrichTerraAccount(account);
+    // console.log(enrichedTerraAccount);
+
+    const enrichedKavaAccount = await enrichKavaAccount(account);
+    // console.log(enrichedKavaAccount);
+
+    const enrichedIrisAccount = await enrichIrisAccount(account);
+    // console.log(enrichedIrisAccount);
+
+    commit('SET_IRIS_ACCOUNT', enrichedIrisAccount);
+    // commit('SET_COSMOS_ACCOUNT', enrichedCosmosAccount);
+    commit('SET_KAVA_ACCOUNT', enrichedKavaAccount);
+    commit('SET_TERRA_ACCOUNT', enrichedTerraAccount);
     // let enrichedAccount;
     // console.log(rootState.session.networkConstants);
     // if (rootState.session.networkConstants === 'cosmos') {
@@ -144,10 +166,10 @@ export const getLedgerAccountDetails = async ({
     // console.log(enrichedAccount);
 
     // Commit the enrichedAccount to state
-    commit('SET_ACCOUNT', userAccount);
+    // commit('SET_ACCOUNT', userAccount);
     commit('session/SET_DONE_LOADING', { ledger: false }, { root: true });
   } catch (e) {
-    dispatch('session/logError', e, { root: true });
+    throw new Error(e);
   }
 };
 </code></pre>
@@ -160,13 +182,13 @@ export const getLedgerAccountDetails = async ({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beginDelegation">beginDelegation</a></li><li><a href="global.html#beginIrisDelegation">beginIrisDelegation</a></li><li><a href="global.html#beginRedelegation">beginRedelegation</a></li><li><a href="global.html#beginUnbonding">beginUnbonding</a></li><li><a href="global.html#buildSignSendCosmosTx">buildSignSendCosmosTx</a></li><li><a href="global.html#checkIrisTxStatus">checkIrisTxStatus</a></li><li><a href="global.html#connectLedger">connectLedger</a></li><li><a href="global.html#enrichCosmosAddresses">enrichCosmosAddresses</a></li><li><a href="global.html#enrichIrisAddresses">enrichIrisAddresses</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#fetchCosmosAccountAuthInfo">fetchCosmosAccountAuthInfo</a></li><li><a href="global.html#fetchCosmosAccountBalance">fetchCosmosAccountBalance</a></li><li><a href="global.html#fetchCosmosAddressDelegations">fetchCosmosAddressDelegations</a></li><li><a href="global.html#fetchCosmosAddressDelegationTxHistory">fetchCosmosAddressDelegationTxHistory</a></li><li><a href="global.html#fetchCosmosAddressUnbondingDelegations">fetchCosmosAddressUnbondingDelegations</a></li><li><a href="global.html#fetchCosmosDelegateValidatorRewards">fetchCosmosDelegateValidatorRewards</a></li><li><a href="global.html#fetchCosmosDelegationRewards">fetchCosmosDelegationRewards</a></li><li><a href="global.html#fetchCosmosDelegationUnbondingTxs">fetchCosmosDelegationUnbondingTxs</a></li><li><a href="global.html#fetchCosmosGovernanceProposals">fetchCosmosGovernanceProposals</a></li><li><a href="global.html#fetchCosmosGovProposalVotesByProposalId">fetchCosmosGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchCosmosLatestBlock">fetchCosmosLatestBlock</a></li><li><a href="global.html#fetchCosmosStakingParameters">fetchCosmosStakingParameters</a></li><li><a href="global.html#fetchCosmosTxByHash">fetchCosmosTxByHash</a></li><li><a href="global.html#fetchCosmosValidatorSet">fetchCosmosValidatorSet</a></li><li><a href="global.html#fetchGovernanceProposals">fetchGovernanceProposals</a></li><li><a href="global.html#fetchIrisAccountAuthInfo">fetchIrisAccountAuthInfo</a></li><li><a href="global.html#fetchIrisAccountBalance">fetchIrisAccountBalance</a></li><li><a href="global.html#fetchIrisAddressDelegationHistory">fetchIrisAddressDelegationHistory</a></li><li><a href="global.html#fetchIrisAddressDelegations">fetchIrisAddressDelegations</a></li><li><a href="global.html#fetchIrisAddressUnbondingDelegations">fetchIrisAddressUnbondingDelegations</a></li><li><a href="global.html#fetchIrisDelegateValidatorRewards">fetchIrisDelegateValidatorRewards</a></li><li><a href="global.html#fetchIrisGovernanceProposals">fetchIrisGovernanceProposals</a></li><li><a href="global.html#fetchIrisGovProposalVotesByProposalId">fetchIrisGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchIrisLatestBlock">fetchIrisLatestBlock</a></li><li><a href="global.html#fetchIrisNodeInfo">fetchIrisNodeInfo</a></li><li><a href="global.html#fetchIrisStakingParameters">fetchIrisStakingParameters</a></li><li><a href="global.html#fetchIrisTxByHash">fetchIrisTxByHash</a></li><li><a href="global.html#fetchIrisValidatorCandidates">fetchIrisValidatorCandidates</a></li><li><a href="global.html#getCosmosAddressFromPubkey">getCosmosAddressFromPubkey</a></li><li><a href="global.html#getIrisAddressFromPubkey">getIrisAddressFromPubkey</a></li><li><a href="global.html#getLedgerCosmosVersion">getLedgerCosmosVersion</a></li><li><a href="global.html#getLedgerPubKey">getLedgerPubKey</a></li><li><a href="global.html#govDeposit">govDeposit</a></li><li><a href="global.html#govVote">govVote</a></li><li><a href="global.html#pollLedgerDevice">pollLedgerDevice</a></li><li><a href="global.html#postSignedTx">postSignedTx</a></li><li><a href="global.html#processCosmosGovernanceProposals">processCosmosGovernanceProposals</a></li><li><a href="global.html#processIrisGovernanceProposals">processIrisGovernanceProposals</a></li><li><a href="global.html#queryCosmosProposals">queryCosmosProposals</a></li><li><a href="global.html#queryIrisProposals">queryIrisProposals</a></li><li><a href="global.html#requestWrapper">requestWrapper</a></li><li><a href="global.html#SET_COSMOS_ADDRESS">SET_COSMOS_ADDRESS</a></li><li><a href="global.html#SET_COSMOS_PROPOSALS">SET_COSMOS_PROPOSALS</a></li><li><a href="global.html#SET_IRIS_ADDRESS">SET_IRIS_ADDRESS</a></li><li><a href="global.html#SET_IRIS_PROPOSALS">SET_IRIS_PROPOSALS</a></li><li><a href="global.html#SET_VOTE_PROPOSAL">SET_VOTE_PROPOSAL</a></li><li><a href="global.html#setCurrentProposal">setCurrentProposal</a></li><li><a href="global.html#signMsg">signMsg</a></li><li><a href="global.html#vote">vote</a></li><li><a href="global.html#withdrawAllRewards">withdrawAllRewards</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beginDelegation">beginDelegation</a></li><li><a href="global.html#beginIrisDelegation">beginIrisDelegation</a></li><li><a href="global.html#beginRedelegation">beginRedelegation</a></li><li><a href="global.html#beginUnbonding">beginUnbonding</a></li><li><a href="global.html#beginVoteTransaction">beginVoteTransaction</a></li><li><a href="global.html#buildSignSendCosmosTx">buildSignSendCosmosTx</a></li><li><a href="global.html#buildSignSendKavaTx">buildSignSendKavaTx</a></li><li><a href="global.html#checkIrisTxStatus">checkIrisTxStatus</a></li><li><a href="global.html#connectLedger">connectLedger</a></li><li><a href="global.html#endVoteTransaction">endVoteTransaction</a></li><li><a href="global.html#enrichCosmosAddresses">enrichCosmosAddresses</a></li><li><a href="global.html#enrichIrisAddresses">enrichIrisAddresses</a></li><li><a href="global.html#enrichKavaAddresses">enrichKavaAddresses</a></li><li><a href="global.html#enrichTerraAddresses">enrichTerraAddresses</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#fetchCosmosAccountAuthInfo">fetchCosmosAccountAuthInfo</a></li><li><a href="global.html#fetchCosmosAccountBalance">fetchCosmosAccountBalance</a></li><li><a href="global.html#fetchCosmosAddressDelegations">fetchCosmosAddressDelegations</a></li><li><a href="global.html#fetchCosmosAddressDelegationTxHistory">fetchCosmosAddressDelegationTxHistory</a></li><li><a href="global.html#fetchCosmosAddressUnbondingDelegations">fetchCosmosAddressUnbondingDelegations</a></li><li><a href="global.html#fetchCosmosDelegateValidatorRewards">fetchCosmosDelegateValidatorRewards</a></li><li><a href="global.html#fetchCosmosDelegationRewards">fetchCosmosDelegationRewards</a></li><li><a href="global.html#fetchCosmosDelegationUnbondingTxs">fetchCosmosDelegationUnbondingTxs</a></li><li><a href="global.html#fetchCosmosGovernanceProposals">fetchCosmosGovernanceProposals</a></li><li><a href="global.html#fetchCosmosGovProposalVotesByProposalId">fetchCosmosGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchCosmosLatestBlock">fetchCosmosLatestBlock</a></li><li><a href="global.html#fetchCosmosStakingParameters">fetchCosmosStakingParameters</a></li><li><a href="global.html#fetchCosmosTxByHash">fetchCosmosTxByHash</a></li><li><a href="global.html#fetchCosmosValidatorSet">fetchCosmosValidatorSet</a></li><li><a href="global.html#fetchGovernanceProposals">fetchGovernanceProposals</a></li><li><a href="global.html#fetchIrisAccountAuthInfo">fetchIrisAccountAuthInfo</a></li><li><a href="global.html#fetchIrisAccountBalance">fetchIrisAccountBalance</a></li><li><a href="global.html#fetchIrisAddressDelegationHistory">fetchIrisAddressDelegationHistory</a></li><li><a href="global.html#fetchIrisAddressDelegations">fetchIrisAddressDelegations</a></li><li><a href="global.html#fetchIrisAddressUnbondingDelegations">fetchIrisAddressUnbondingDelegations</a></li><li><a href="global.html#fetchIrisDelegateValidatorRewards">fetchIrisDelegateValidatorRewards</a></li><li><a href="global.html#fetchIrisGovernanceProposals">fetchIrisGovernanceProposals</a></li><li><a href="global.html#fetchIrisGovProposalVotesByProposalId">fetchIrisGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchIrisLatestBlock">fetchIrisLatestBlock</a></li><li><a href="global.html#fetchIrisNodeInfo">fetchIrisNodeInfo</a></li><li><a href="global.html#fetchIrisStakingParameters">fetchIrisStakingParameters</a></li><li><a href="global.html#fetchIrisTxByHash">fetchIrisTxByHash</a></li><li><a href="global.html#fetchIrisValidatorCandidates">fetchIrisValidatorCandidates</a></li><li><a href="global.html#fetchKavaAccountAuthInfo">fetchKavaAccountAuthInfo</a></li><li><a href="global.html#fetchKavaAccountBalance">fetchKavaAccountBalance</a></li><li><a href="global.html#fetchKavaAddressDelegations">fetchKavaAddressDelegations</a></li><li><a href="global.html#fetchKavaAddressDelegationTxHistory">fetchKavaAddressDelegationTxHistory</a></li><li><a href="global.html#fetchKavaAddressUnbondingDelegations">fetchKavaAddressUnbondingDelegations</a></li><li><a href="global.html#fetchKavaDelegateValidatorRewards">fetchKavaDelegateValidatorRewards</a></li><li><a href="global.html#fetchKavaDelegationRewards">fetchKavaDelegationRewards</a></li><li><a href="global.html#fetchKavaDelegationUnbondingTxs">fetchKavaDelegationUnbondingTxs</a></li><li><a href="global.html#fetchKavaGovernanceProposals">fetchKavaGovernanceProposals</a></li><li><a href="global.html#fetchKavaGovProposalVotesByProposalId">fetchKavaGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchKavaLatestBlock">fetchKavaLatestBlock</a></li><li><a href="global.html#fetchKavaStakingParameters">fetchKavaStakingParameters</a></li><li><a href="global.html#fetchKavaTxByHash">fetchKavaTxByHash</a></li><li><a href="global.html#fetchKavaValidatorSet">fetchKavaValidatorSet</a></li><li><a href="global.html#fetchTerraAccountAuthInfo">fetchTerraAccountAuthInfo</a></li><li><a href="global.html#fetchTerraAccountBalance">fetchTerraAccountBalance</a></li><li><a href="global.html#fetchTerraAddressDelegations">fetchTerraAddressDelegations</a></li><li><a href="global.html#fetchTerraAddressDelegationTxHistory">fetchTerraAddressDelegationTxHistory</a></li><li><a href="global.html#fetchTerraAddressUnbondingDelegations">fetchTerraAddressUnbondingDelegations</a></li><li><a href="global.html#fetchTerraDelegateValidatorRewards">fetchTerraDelegateValidatorRewards</a></li><li><a href="global.html#fetchTerraDelegationRewards">fetchTerraDelegationRewards</a></li><li><a href="global.html#fetchTerraDelegationUnbondingTxs">fetchTerraDelegationUnbondingTxs</a></li><li><a href="global.html#fetchTerraGovernanceProposals">fetchTerraGovernanceProposals</a></li><li><a href="global.html#fetchTerraGovProposalVotesByProposalId">fetchTerraGovProposalVotesByProposalId</a></li><li><a href="global.html#fetchTerraLatestBlock">fetchTerraLatestBlock</a></li><li><a href="global.html#fetchTerraStakingParameters">fetchTerraStakingParameters</a></li><li><a href="global.html#fetchTerraTxByHash">fetchTerraTxByHash</a></li><li><a href="global.html#fetchTerraValidatorSet">fetchTerraValidatorSet</a></li><li><a href="global.html#getCosmosAddressFromPubkey">getCosmosAddressFromPubkey</a></li><li><a href="global.html#getIrisAddressFromPubkey">getIrisAddressFromPubkey</a></li><li><a href="global.html#getLedgerCosmosVersion">getLedgerCosmosVersion</a></li><li><a href="global.html#getLedgerPubKey">getLedgerPubKey</a></li><li><a href="global.html#govDeposit">govDeposit</a></li><li><a href="global.html#govVote">govVote</a></li><li><a href="global.html#pollLedgerDevice">pollLedgerDevice</a></li><li><a href="global.html#postSignedTx">postSignedTx</a></li><li><a href="global.html#processCosmosGovernanceProposals">processCosmosGovernanceProposals</a></li><li><a href="global.html#processIrisGovernanceProposals">processIrisGovernanceProposals</a></li><li><a href="global.html#queryCosmosProposals">queryCosmosProposals</a></li><li><a href="global.html#queryIrisProposals">queryIrisProposals</a></li><li><a href="global.html#requestWrapper">requestWrapper</a></li><li><a href="global.html#SET_COSMOS_ACCOUNT">SET_COSMOS_ACCOUNT</a></li><li><a href="global.html#SET_COSMOS_ADDRESS">SET_COSMOS_ADDRESS</a></li><li><a href="global.html#SET_COSMOS_PROPOSALS">SET_COSMOS_PROPOSALS</a></li><li><a href="global.html#SET_IRIS_ACCOUNT">SET_IRIS_ACCOUNT</a></li><li><a href="global.html#SET_IRIS_ADDRESS">SET_IRIS_ADDRESS</a></li><li><a href="global.html#SET_IRIS_PROPOSALS">SET_IRIS_PROPOSALS</a></li><li><a href="global.html#SET_KAVA_ACCOUNT">SET_KAVA_ACCOUNT</a></li><li><a href="global.html#SET_KAVA_ADDRESS">SET_KAVA_ADDRESS</a></li><li><a href="global.html#SET_TERRA_ACCOUNT">SET_TERRA_ACCOUNT</a></li><li><a href="global.html#SET_TERRA_ADDRESS">SET_TERRA_ADDRESS</a></li><li><a href="global.html#SET_VOTE_PROPOSAL">SET_VOTE_PROPOSAL</a></li><li><a href="global.html#signMsg">signMsg</a></li><li><a href="global.html#withdrawAllRewards">withdrawAllRewards</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Feb 12 2020 18:52:54 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Mar 02 2020 21:59:03 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

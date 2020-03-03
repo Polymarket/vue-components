@@ -6,7 +6,7 @@ import {
   createCosmosAddress, createIrisAddress, createTerraAddress, createKavaAddress,
 } from '../../helpers/wallet';
 import {
-  enrichCosmosAccount, enrichIrisAccount, enrichKavaAccount, enrichTerraAccount,
+  enrichIrisAccount, enrichKavaAccount, enrichTerraAccount,
 } from '../../helpers/accountEnrichment';
 // import {
 //   fetchCosmosAccountAuthInfo,
@@ -107,25 +107,25 @@ export const getLedgerAccountDetails = async ({
       HDPATH: state.HDPATH,
       pubKey,
     };
-    console.log(account);
+    // console.log(account);
 
 
-    console.log('fetching enriched accounts');
+    // console.log('fetching enriched accounts');
 
-    const enrichedCosmosAccount = await enrichCosmosAccount(account);
-    console.log(enrichedCosmosAccount);
+    // const enrichedCosmosAccount = await enrichCosmosAccount(account);
+    // console.log(enrichedCosmosAccount);
 
     const enrichedTerraAccount = await enrichTerraAccount(account);
-    console.log(enrichedTerraAccount);
+    // console.log(enrichedTerraAccount);
 
     const enrichedKavaAccount = await enrichKavaAccount(account);
-    console.log(enrichedKavaAccount);
+    // console.log(enrichedKavaAccount);
 
     const enrichedIrisAccount = await enrichIrisAccount(account);
-    console.log(enrichedIrisAccount);
+    // console.log(enrichedIrisAccount);
 
     commit('SET_IRIS_ACCOUNT', enrichedIrisAccount);
-    commit('SET_COSMOS_ACCOUNT', enrichedCosmosAccount);
+    // commit('SET_COSMOS_ACCOUNT', enrichedCosmosAccount);
     commit('SET_KAVA_ACCOUNT', enrichedKavaAccount);
     commit('SET_TERRA_ACCOUNT', enrichedTerraAccount);
     // let enrichedAccount;

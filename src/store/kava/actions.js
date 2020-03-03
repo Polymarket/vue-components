@@ -1,71 +1,56 @@
-// import Irisnet from 'irisnet-crypto';
-// import { signMsg } from '../../helpers/ledger';
-//
-// import {
-//   KAVAMAINNET,
-//   UATOM,
-//   LEDGER_REDELEGATE_MEMO,
-//   LEDGER_DELEGATE_MEMO,
-//   KAVAFEEAMOUNT,
-//   KAVAGAS,
-//   LEDGER_UNBOND_MEMO,
-//   LEDGER_REWARDCLAIM_MEMO,
-//   LEDGER_VOTE_MEMO,
-//   GAIA,
-//   // KAVA_NODE_URL,
-// } from '../../config/index';
-// // import { newMsgDelegate } from '../../helpers/kava';
-//
-// // const cosmosjs = require('@cosmostation/cosmosjs');
-//
-// // const kava = cosmosjs.networkConstants(KAVA_NODE_URL, 'kava-2');
-//
-// import {
-//   fetchKavaTxByHash,
-//   postKavaSignedTx,
-// } from '../../services/api';
+import Irisnet from 'irisnet-crypto';
+import { signMsg } from '../../helpers/ledger';
+
+import {
+  // LEDGER_REDELEGATE_MEMO,
+  LEDGER_DELEGATE_MEMO,
+  // LEDGER_UNBOND_MEMO,
+  // LEDGER_REWARDCLAIM_MEMO,
+  // LEDGER_VOTE_MEMO,
+} from '../../config/index';
+
+import {
+  // fetchKavaTxByHash,
+  postKavaSignedTx,
+} from '../../services/api';
 
 
 /**
  * @function beginDelegation
  * @description creates delegation transaction, awaits signature, sends to networkConstants
  */
-export const beginDelegation = async () => {
-  // try {
-  console.log('kava delegation');
+export const beginDelegation = async ({ dispatch, rootState }) => {
+  try {
+    const msg = {
+      validator_addr: rootState.delegation.targetValidator.operator_address,
+      delegator_addr:
+        rootState.ledger.account[rootState.session.networkConfig.networkNameLC].address,
+      amount: {
+        denom: rootState.session.networkConfig.delegationDenom,
+        amount: rootState.delegation.delegationAmount * 1000000,
+      },
+    };
 
-  // const msg = newMsgDelegate(address, cDenom, truncCAmount, params.pDenom, truncPAmount);
+    const request = {
+      chain_id: rootState.session.networkConfig.chainID,
+      from: rootState.ledger.account[rootState.session.networkConfig.networkNameLC].address,
+      account_number:
+        rootState.ledger.account[rootState.session.networkConfig.networkNameLC].account_number,
+      sequence: rootState.ledger.account[rootState.session.networkConfig.networkNameLC].sequence,
+      fees: {
+        denom: rootState.session.networkConfig.delegationDenom,
+        amount: rootState.session.networkConfig.fee,
+      },
+      gas: rootState.session.networkConfig.gas,
+      memo: LEDGER_DELEGATE_MEMO,
+      type: 'delegate',
+      msg,
+    };
 
-  // Delegate message (same for unbonding)
-  //   const msg = {
-  //     validator_addr: rootState.delegation.delegationConfig.delegateAddress,
-  //     amount: {
-  //       denom: UATOM,
-  //       amount: rootState.delegation.delegationParams.amount,
-  //     },
-  //   };
-
-  //   // Delegate request (change type to undelegate for unbonding / un-delegating)
-  //   const request = {
-  //     chain_id: KAVAMAINNET,
-  //     from: rootState.delegation.delegationParams.selectedAccount.address,
-  //     account_number:
-  //       rootState.delegation.delegationParams.selectedAccount.account_number,
-  //     sequence: rootState.delegation.delegationParams.selectedAccount.sequence,
-  //     fees: {
-  //       denom: UATOM,
-  //       amount: KAVAFEEAMOUNT,
-  //     },
-  //     gas: KAVAGAS,
-  //     memo: LEDGER_DELEGATE_MEMO,
-  //     type: 'delegate',
-  //     msg,
-  //   };
-
-  //   dispatch('buildSignSendKavaTx', request);
-  // } catch (e) {
-  //   dispatch('errorMessage', e.toString());
-  // }
+    dispatch('buildSignSendKavaTx', request);
+  } catch (e) {
+    throw new Error(e);
+  }
 };
 
 // /**
@@ -197,68 +182,68 @@ export const beginDelegation = async () => {
 // };
 //
 //
-// /**
-//  * @function buildSignSendKavaTx
-//  * @description Constructs the transaction,
-//  sends to ledger for signature, and sends to networkConstants
-//  * @param  {Object} request   {the raw transaction request for the Msg type to build}
-//  */
-// export const buildSignSendKavaTx = async ({ rootState, dispatch }, request) => {
-//   try {
-//     const builder = Irisnet.getBuilder('cosmos');
-//     const accountHDPATH = rootState.ledger.HDPATH;
-//
-//     // create a stdTx from the request object
-//     const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
-//
-//     // get the portions of the tx to sign
-//     const signBytes = stdTx.GetSignBytes();
-//
-//     // get the signatures from a ledger signing action
-//     const sigs = await signMsg(accountHDPATH, signBytes);
-//
-//     // get the portion of the stdTx for attaching signature(s)
-//     const txData = stdTx.GetData();
-//
-//     // attach signatures
-//     txData.tx.signatures = sigs;
-//
-//
-//     // send tx to node
-//     const txResponse = await postKavaSignedTx(txData);
-//     console.log(txResponse);
-//     // commit('ledger/SET_TX_HASH', txResponse.data.txhash, {
-//     //   root: true,
-//     // });
-//     // if (txResponse.data.logs[0].success === true) {
-//     //   commit('delegation/SET_ACTIVE_DELEGATION_PROMPT', 'TxSuccessPrompt', {
-//     //     root: true,
-//     //   });
-//     // } else {
-//     //   dispatch(
-//     //     'delegation/toggleLoadingModal', {
-//     //       visible: true,
-//     //       header: '',
-//     //       footer: 'Broadcasting signed transaction to the networkConstants..',
-//     //     }, {
-//     //       root: true,
-//     //     },
-//     //   );
-//
-//     //   const delay = 30000;
-//
-//     //   setTimeout(() => {
-//     //     dispatch(
-//     //       'checkKavaTxStatus',
-//     //     );
-//     //   }, delay);
-//     // }
-//   } catch (e) {
-//     dispatch('session/logError', e, { root: true });
-//   } finally {
-//     dispatch('session/logDelegationRecord', null, { root: true });
-//   }
-// };
+/**
+ * @function buildSignSendKavaTx
+ * @description Constructs the transaction,
+ sends to ledger for signature, and sends to networkConstants
+ * @param  {Object} request   {the raw transaction request for the Msg type to build}
+ */
+export const buildSignSendKavaTx = async ({ rootState, dispatch }, request) => {
+  try {
+    const builder = Irisnet.getBuilder(rootState.session.networkConfig.networkNameLC);
+    const accountHDPATH = rootState.ledger.HDPATH;
+
+    // create a stdTx from the request object
+    const stdTx = builder.buildTx(JSON.parse(JSON.stringify(request)));
+
+    // get the portions of the tx to sign
+    const signBytes = stdTx.GetSignBytes();
+
+    // get the signatures from a ledger signing action
+    const sigs = await signMsg(accountHDPATH, signBytes);
+
+    // get the portion of the stdTx for attaching signature(s)
+    const txData = stdTx.GetData();
+
+    // attach signatures
+    txData.tx.signatures = sigs;
+
+
+    // send tx to node
+    const txResponse = await postKavaSignedTx(txData);
+    console.log(txResponse);
+    // commit('ledger/SET_TX_HASH', txResponse.data.txhash, {
+    //   root: true,
+    // });
+    // if (txResponse.data.logs[0].success === true) {
+    //   commit('delegation/SET_ACTIVE_DELEGATION_PROMPT', 'TxSuccessPrompt', {
+    //     root: true,
+    //   });
+    // } else {
+    //   dispatch(
+    //     'delegation/toggleLoadingModal', {
+    //       visible: true,
+    //       header: '',
+    //       footer: 'Broadcasting signed transaction to the networkConstants..',
+    //     }, {
+    //       root: true,
+    //     },
+    //   );
+
+    //   const delay = 30000;
+
+    //   setTimeout(() => {
+    //     dispatch(
+    //       'checkKavaTxStatus',
+    //     );
+    //   }, delay);
+    // }
+  } catch (e) {
+    dispatch('session/logError', e, { root: true });
+  } finally {
+    dispatch('session/logDelegationRecord', null, { root: true });
+  }
+};
 //
 // // message MsgDeposit {
 // //   required int64 proposalID = 1;

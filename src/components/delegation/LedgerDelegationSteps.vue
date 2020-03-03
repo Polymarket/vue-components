@@ -38,26 +38,34 @@
         :name="2"
         title="Delegation Selection"
         caption="Please enter the amount you wish to delegate"
-        icon="bank_account_balance"
+        icon="account_balance"
         :done="step > 2"
       >
-        <div class="text-h6">
-          {{targetValidator}}
-        </div>
 
-        <!--        <p>{{ voteProposal.id }} - {{ voteProposal.title }}</p>-->
-        <!--        <p>{{ voteProposal.description }}</p>-->
+        <q-item
+          class="q-ma-sm"
+        >
+          <q-item-section
+            avatar
+            top
+          >
+            <q-avatar>
+              <img :src="targetValidator.logo">
+            </q-avatar>
+          </q-item-section>
+
+          <q-item-section top>
+            <q-item-label overflow-auto>
+              <span class="text-weight-bold">{{ targetValidator.label }}</span>
+            </q-item-label>
+            <q-item-label>
+              {{ targetValidator.location }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
 
         <div class="q-pa-md">
-          <q-input v-model="delegationAmount">
-
-          </q-input>
-          <!--          <q-option-group-->
-          <!--            v-model="voteOption"-->
-          <!--            :options="options"-->
-          <!--            label="Options"-->
-          <!--            type="radio"-->
-          <!--          />-->
+          <q-input outlined label="Amount to Delegate" v-model="delegationAmount" />
         </div>
 
         <q-stepper-navigation>
@@ -78,29 +86,30 @@
 
       <q-step
         :name="3"
-        title="Confirm Vote Transaction"
+        title="Confirm Delegation Transaction"
         icon="send"
       >
         <div class="text-h6">
           Sign Tx
         </div>
-
         Click submit to generate the transaction.
         You will be prompted to sign the transaction on your Ledger.
         <q-stepper-navigation>
           <q-btn
             color="primary"
             label="Submit"
+            @click="delegate"
+
           />
           <q-btn
             flat
             color="primary"
-            label="Cancel"
+            label="Back"
             class="q-ml-sm"
+            @click="step = 2"
           />
         </q-stepper-navigation>
       </q-step>
-
       <q-step
         :name="4"
         title="Tx Status"
@@ -109,10 +118,8 @@
         <div class="text-h6">
           Transaction sent.
         </div>
-
         <!--        Tx Hash: {{ stepMsg.txhash }}-->
         <!--        Successful: {{ stepMsg.logs[0].success }}-->
-
         <q-stepper-navigation>
           <q-btn
             flat
@@ -170,7 +177,7 @@ export default {
     },
     txInProgress: {
       get() {
-        return this.$store.session.ledgerTxInProgress;
+        return this.$store.state.session.ledgerTxInProgress;
       },
     },
     targetValidator: {
@@ -196,7 +203,10 @@ export default {
     getAccountDetails() {
       this.$store.dispatch('ledger/getLedgerAccountDetails');
     },
-
+    delegate() {
+      // this.$store.dispatch('ledger/delegate');
+      this.$store.dispatch('kava/beginDelegation');
+    },
   },
 };
 </script>

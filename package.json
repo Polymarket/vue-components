@@ -16,7 +16,6 @@
     "changelog": "sh scripts/changelog.sh"
   },
   "dependencies": {
-    "@cosmostation/cosmosjs": "^0.5.2",
     "@ledgerhq/hw-transport-u2f": "^5.9.0",
     "@ledgerhq/hw-transport-webusb": "^5.9.0",
     "@quasar/extras": "^1.5.2",
@@ -29,7 +28,7 @@
     "crypto-js": "^4.0.0",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.2",
-    "irisnet-crypto": "git+https://github.com/irisnet/irisnet-crypto.git#develop",
+    "irisnet-crypto": "github:TokenUnion/irisnet-crypto#kava",
     "ledger-cosmos-js": "^2.1.7",
     "quasar": "^1.9.6",
     "secp256k1": "^4.0.0",
