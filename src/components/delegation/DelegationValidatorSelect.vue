@@ -46,7 +46,7 @@ export default {
   computed: {
     currentNetwork: {
       get() {
-        return this.$store.state.session.networkName;
+        return this.$store.state.session.networkConfig.networkNameProper;
       },
     },
     selectedValidator: {

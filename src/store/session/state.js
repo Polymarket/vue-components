@@ -1,6 +1,14 @@
 export default {
-  network: 'cosmos',
-  networkName: 'Cosmos',
+  networkConfig: {
+    chainID: 'cosmoshub-3',
+    networkNameLC: 'cosmos',
+    networkNameUC: 'COSMOS',
+    networkNameProper: 'Cosmos',
+    tokenDenom: 'atom',
+    delegationDenom: 'uatom',
+    fee: 100,
+    gas: 175000,
+  },
   leftDrawer: false,
   rightDrawer: false,
   loading: {
@@ -8,6 +16,7 @@ export default {
   },
   stepsContainerVisible: false,
   ledgerVoteStepsVisible: false,
+  ledgerDelegationStepsVisible: false,
   messages: [],
   ledgerTxInProgress: false,
   ledgerTxCurrentStep: {

@@ -4,7 +4,7 @@ export function someMutation (state) {
 */
 
 export function SET_TARGET_VALIDATOR(state, val) {
-  state.targetValidator = val;
+  state.targetValidator = Object.assign({}, val);
 }
 
 export function CLEAR_TARGET_VALIDATOR(state) {

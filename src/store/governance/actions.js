@@ -1,6 +1,11 @@
 import Irisnet from 'irisnet-crypto';
-import { fetchCosmosGovernanceProposals, postCosmosSignedTx } from '../../services/cosmos/api';
-import { fetchIrisGovernanceProposals, fetchIrisGovProposalVotesByProposalId } from '../../services/iris/api';
+import {
+  fetchCosmosGovernanceProposals,
+  postCosmosSignedTx,
+  fetchIrisGovernanceProposals,
+  fetchIrisGovProposalVotesByProposalId,
+} from '../../services/api';
+
 
 import {
   COSMOSFEEAMOUNT, COSMOSGAS, LEDGER_VOTE_MEMO,

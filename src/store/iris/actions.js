@@ -5,7 +5,7 @@ import {
 import {
   postIrisSignedTx,
   fetchIrisTxByHash,
-} from '../../services/iris/api';
+} from '../../services/api';
 import {
   enrichIrisAccount,
 } from '../../helpers/accountEnrichment';
@@ -115,7 +115,7 @@ export const beginIrisDelegation = async ({
 
 /**
  * @function beginRedelegation
- * @description creates delegation transaction, awaits signature, sends to network
+ * @description creates delegation transaction, awaits signature, sends to networkConstants
  */
 export const beginRedelegation = async ({
   rootState,
@@ -158,7 +158,7 @@ export const beginRedelegation = async ({
 
 /**
  * @function withdrawAllRewards
- * @description creates delegation transaction, awaits signature, sends to network
+ * @description creates delegation transaction, awaits signature, sends to networkConstants
  */
 export const withdrawAllRewards = async ({
   dispatch,
@@ -248,7 +248,7 @@ export const buildSignSendIrisTx = async ({ rootState, dispatch, commit }, reque
       'delegation/toggleLoadingModal', {
         visible: true,
         header: '',
-        footer: 'Broadcasting signed transaction to the network..',
+        footer: 'Broadcasting signed transaction to the networkConstants..',
       }, {
         root: true,
       },

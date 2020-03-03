@@ -16,8 +16,11 @@
         <div v-if="loading">
           Loading your account info..
         </div>
-        <div v-if="!loading">
-          Your address for voting: {{ address }}
+        <div v-if="!loading && address == ''">
+          Unable to load your address info. Did you connect to your Ledger?
+        </div>
+        <div v-if="!loading && address != ''">
+          Your address for delegating: {{ address }}
         </div>
 
 
@@ -33,25 +36,28 @@
 
       <q-step
         :name="2"
-        title="Vote Selection"
-        caption="Please choose your vote selection"
-        icon="ballot"
+        title="Delegation Selection"
+        caption="Please enter the amount you wish to delegate"
+        icon="bank_account_balance"
         :done="step > 2"
       >
         <div class="text-h6">
-          Proposal Details
+          {{targetValidator}}
         </div>
 
-        <p>{{ voteProposal.id }} - {{ voteProposal.title }}</p>
-        <p>{{ voteProposal.description }}</p>
+        <!--        <p>{{ voteProposal.id }} - {{ voteProposal.title }}</p>-->
+        <!--        <p>{{ voteProposal.description }}</p>-->
 
         <div class="q-pa-md">
-          <q-option-group
-            v-model="voteOption"
-            :options="options"
-            label="Options"
-            type="radio"
-          />
+          <q-input v-model="delegationAmount">
+
+          </q-input>
+          <!--          <q-option-group-->
+          <!--            v-model="voteOption"-->
+          <!--            :options="options"-->
+          <!--            label="Options"-->
+          <!--            type="radio"-->
+          <!--          />-->
         </div>
 
         <q-stepper-navigation>
@@ -85,14 +91,12 @@
           <q-btn
             color="primary"
             label="Submit"
-            @click="vote"
           />
           <q-btn
             flat
             color="primary"
             label="Cancel"
             class="q-ml-sm"
-            @click="endVoting"
           />
         </q-stepper-navigation>
       </q-step>
@@ -106,8 +110,8 @@
           Transaction sent.
         </div>
 
-        Tx Hash: {{ stepMsg.txhash }}
-        Successful: {{ stepMsg.logs[0].success }}
+        <!--        Tx Hash: {{ stepMsg.txhash }}-->
+        <!--        Successful: {{ stepMsg.logs[0].success }}-->
 
         <q-stepper-navigation>
           <q-btn
@@ -115,7 +119,6 @@
             color="primary"
             label="Exit"
             class="q-ml-sm"
-            @click="endVoting"
           />
         </q-stepper-navigation>
       </q-step>
@@ -127,16 +130,9 @@
 import { mapState } from 'vuex';
 
 export default {
-  name: 'LedgerVoteSteps',
+  name: 'LedgerDelegationSteps',
   data() {
     return {
-      voteOption: null,
-      options: [
-        { label: 'Yes', value: 0x01, color: 'green' },
-        { label: 'No', value: 0x03, color: 'red' },
-        { label: 'No with Veto', value: 0x04, color: 'orange' },
-        { label: 'Abstain', value: 0x02, color: 'grey' },
-      ],
     };
   },
   computed: {
@@ -172,16 +168,25 @@ export default {
         return this.$store.state.session.loading.ledger;
       },
     },
-    voteProposal: {
-      get() {
-        return this.$store.state.governance.voteProposal;
-      },
-    },
     txInProgress: {
       get() {
         return this.$store.session.ledgerTxInProgress;
       },
     },
+    targetValidator: {
+      get() {
+        return this.$store.state.delegation.targetValidator;
+      },
+    },
+    delegationAmount: {
+      get() {
+        return this.$store.state.delegation.delegationAmount;
+      },
+      set(val) {
+        this.$store.dispatch('delegation/setDelegationAmount', val);
+      },
+    },
+
   },
   beforeMount() {
     this.getAccountDetails();
@@ -191,12 +196,7 @@ export default {
     getAccountDetails() {
       this.$store.dispatch('ledger/getLedgerAccountDetails');
     },
-    vote() {
-      this.$store.dispatch('governance/vote', this.voteOption);
-    },
-    endVoting() {
-      this.$store.dispatch('governance/endVoteTransaction');
-    },
+
   },
 };
 </script>

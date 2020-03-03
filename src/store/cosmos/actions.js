@@ -4,7 +4,7 @@ import { signMsg } from '../../helpers/ledger';
 import {
   fetchCosmosTxByHash,
   postCosmosSignedTx,
-} from '../../services/cosmos/api';
+} from '../../services/api';
 
 import {
   COSMOSHUB,
@@ -22,7 +22,7 @@ import {
 
 /**
  * @function beginDelegation
- * @description creates delegation transaction, awaits signature, sends to network
+ * @description creates delegation transaction, awaits signature, sends to networkConstants
  */
 export const beginDelegation = async ({
   rootState,
@@ -63,7 +63,7 @@ export const beginDelegation = async ({
 
 /**
  * @function beginRedelegation
- * @description creates delegation transaction, awaits signature, sends to network
+ * @description creates delegation transaction, awaits signature, sends to networkConstants
  */
 export const beginRedelegation = async ({
   rootState,
@@ -108,7 +108,7 @@ export const beginRedelegation = async ({
 
 /**
  * @function beginUnbonding
- * @description creates unbonding transaction, awaits signature, sends to network
+ * @description creates unbonding transaction, awaits signature, sends to networkConstants
  */
 export const beginUnbonding = async ({
   rootState,
@@ -192,7 +192,9 @@ export const govVote = async ({
 
 /**
  * @function buildSignSendCosmosTx
- * @description Constructs the transaction, sends to ledger for signature, and sends to network
+ * @description Constructs the transaction,
+ * sends to ledger for signature,
+ * and sends to networkConstants
  * @param  {Object} request   {the raw transaction request for the Msg type to build}
  */
 export const buildSignSendCosmosTx = async ({ rootState, dispatch }, request) => {
@@ -231,7 +233,7 @@ export const buildSignSendCosmosTx = async ({ rootState, dispatch }, request) =>
     //     'delegation/toggleLoadingModal', {
     //       visible: true,
     //       header: '',
-    //       footer: 'Broadcasting signed transaction to the network..',
+    //       footer: 'Broadcasting signed transaction to the networkConstants..',
     //     }, {
     //       root: true,
     //     },
@@ -309,7 +311,7 @@ export const govDeposit = async ({
 
 /**
  * @function withdrawAllRewards
- * @description creates delegation transaction, awaits signature, sends to network
+ * @description creates delegation transaction, awaits signature, sends to networkConstants
  */
 export const withdrawAllRewards = async ({
   dispatch,

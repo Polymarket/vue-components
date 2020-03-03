@@ -19,11 +19,11 @@
 
     <h1 class="page-title">Source: store/ledger/actions.js</h1>
 
-    
 
 
 
-    
+
+
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
@@ -135,10 +135,10 @@ export const getLedgerAccountDetails = async ({
     commit('SET_COSMOS_ADDRESS', cosmosAddress);
 
     // let enrichedAccount;
-    // console.log(rootState.session.network);
-    // if (rootState.session.network === 'cosmos') {
+    // console.log(rootState.session.networkConstants);
+    // if (rootState.session.networkConstants === 'cosmos') {
     //   // enrichedAccount = await enrichCosmosAccount(account);
-    // } else if (rootState.session.network === 'iris') {
+    // } else if (rootState.session.networkConstants === 'iris') {
     //   enrichedAccount = await enrichIrisAccount(account);
     // }
     // console.log(enrichedAccount);

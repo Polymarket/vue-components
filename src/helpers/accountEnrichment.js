@@ -1,5 +1,7 @@
 /* eslint-disable camelcase */
-import { createCosmosAddress, createIrisAddress } from './wallet';
+import {
+  createCosmosAddress, createIrisAddress, createTerraAddress, createKavaAddress,
+} from './wallet';
 import { fetchProviderIdentity } from '../services/apollo/fetchProviderIdentity';
 
 import {
@@ -8,16 +10,23 @@ import {
   fetchCosmosAccountAuthInfo,
   fetchCosmosValidatorSet,
   fetchCosmosDelegationRewards,
-  // fetchCosmosDelegationUnbondingTxs
-} from '../services/cosmos/api';
-import {
   fetchIrisAddressDelegations,
   fetchIrisAddressDelegationTxHistory,
   fetchIrisAddressUnbondingDelegations,
   fetchIrisAccountAuthInfo,
   fetchIrisValidatorCandidates,
   fetchIrisDelegateValidatorRewards,
-} from '../services/iris/api';
+  fetchKavaAddressDelegations,
+  fetchKavaAddressUnbondingDelegations,
+  fetchKavaAccountAuthInfo,
+  fetchKavaValidatorSet,
+  fetchKavaDelegationRewards,
+  fetchTerraAddressDelegations,
+  fetchTerraAddressUnbondingDelegations,
+  fetchTerraAccountAuthInfo,
+  fetchTerraValidatorSet,
+  fetchTerraDelegationRewards,
+} from '../services/api';
 
 export async function enrichIrisAccount(account) {
   try {
@@ -124,7 +133,7 @@ export async function enrichIrisAccount(account) {
  */
 export const enrichCosmosAccount = async (account) => {
   try {
-    console.log('enriching cosmos account');
+    console.log('enriching cosmos account', account);
     // determine the account (bech32) from compressed_pk
     const address = createCosmosAddress(account.pubKey.compressed_pk);
 
@@ -213,6 +222,210 @@ export const enrichCosmosAccount = async (account) => {
 
     // set the balance mirror key value for delegation flow integrations
     userAccount.balance = userAccount.coins[0].amount;
+    console.log(userAccount);
+    return userAccount;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+
+/**
+ * @function enrichKavaAddresses
+ * @description queries information for an account and creates an account object
+ */
+export const enrichKavaAccount = async (account) => {
+  try {
+    // determine the account (bech32) from compressed_pk
+    const address = createKavaAddress(account.pubKey.compressed_pk);
+
+    // make api calls to node to grab account details
+    const accountAuth = await fetchKavaAccountAuthInfo(address);
+    const accountDelegations = await fetchKavaAddressDelegations(address);
+    const accountUnbondingDelegations = await fetchKavaAddressUnbondingDelegations(
+      address,
+    );
+    const validatorSet = await fetchKavaValidatorSet();
+
+    // Create base userAccount object and add part of the data
+    const userAccount = Object.assign({}, accountAuth.value);
+    userAccount.unbondingDelegations = accountUnbondingDelegations;
+    userAccount.HDPATH = account.HDPATH;
+    userAccount.pubKey = account.pubKey.compressed_pk;
+
+    // We could simply add the delegations in a similar un-changed fashion like so:
+    // userAccount.accountDelegations = accountDelegations;
+    // userAccount.delegationHistory = accountDelegationHistory;
+
+    // But we are going to format the delegationHistory like this;
+    const delegationHistory = [];
+
+    // if the account has delegations
+    if (accountDelegations == null) {
+      // or leave it blank if they have none
+      userAccount.delegations = [];
+    } else {
+      // take the accountDelegations  data
+      const delegations = accountDelegations;
+
+      // and foreach of the delegations therein
+      for (let ds = 0; ds < delegations.length; ds += 1) {
+        // create an array of tx history
+        // Next, for each delegation, grab provider details from the DB via Apollo
+
+        /* eslint-disable no-await-in-loop */
+        const providerData = await fetchProviderIdentity(
+          delegations[ds].validator_address,
+        );
+        const rewardsData = await fetchKavaDelegationRewards(
+          address, (delegations[ds].validator_address).toString(),
+        );
+        /* eslint-enable no-await-in-loop */
+
+        // If the provider_name from the providerData
+        let provider_name = providerData.providerName;
+
+        // Is not found or is a blank
+        if (providerData.providerName === '') {
+          // check the validatorSet for the operator_address
+          for (let i = 0; i < validatorSet.length; i += 1) {
+            if (
+              validatorSet[i].operator_address
+              === delegations[ds].validator_address
+            ) {
+              // and set name as moniker instead
+              provider_name = validatorSet[i].description.moniker;
+              break;
+            }
+          }
+          delegations[ds].providerName = provider_name;
+        } else {
+          delegations[ds].providerName = providerData.providerName;
+        }
+
+        // Add the logo and provider URL as well; blanks are ok here
+        delegations[ds].providerLogo = providerData.providerLogo;
+        delegations[ds].providerURL = providerData.providerURL;
+        delegations[ds].rewardsData = rewardsData;
+
+        // Add a copy of the shares value as a balance key for integrations into delegation flow
+        delegations[ds].balance = delegations[ds].shares;
+
+        // add the delegation to the array
+        delegationHistory.push(delegations[ds]);
+      }
+      // add the delegation history array to the userAccount Object
+      userAccount.delegations = delegationHistory;
+    }
+
+    // set the balance mirror key value for delegation flow integrations
+    userAccount.balance = userAccount.coins[0].amount;
+    return userAccount;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+
+/**
+ * @function enrichTerraAddresses
+ * @description queries information for an account and creates an account object
+ */
+export const enrichTerraAccount = async (account) => {
+  try {
+    console.log('enriching terra account');
+    // determine the account (bech32) from compressed_pk
+    const address = createTerraAddress(account.pubKey.compressed_pk);
+
+    // make api calls to node to grab account details
+    const accountAuth = await fetchTerraAccountAuthInfo(address);
+    console.log(accountAuth);
+
+    const accountDelegations = await fetchTerraAddressDelegations(address);
+    console.log(accountDelegations);
+
+    const accountUnbondingDelegations = await fetchTerraAddressUnbondingDelegations(
+      address,
+    );
+    const validatorSet = await fetchTerraValidatorSet();
+
+    // Create base userAccount object and add part of the data
+    const userAccount = Object.assign({}, accountAuth.value);
+    userAccount.unbondingDelegations = accountUnbondingDelegations;
+    userAccount.HDPATH = account.HDPATH;
+    userAccount.pubKey = account.pubKey.compressed_pk;
+
+    // We could simply add the delegations in a similar un-changed fashion like so:
+    // userAccount.accountDelegations = accountDelegations;
+    // userAccount.delegationHistory = accountDelegationHistory;
+
+    // But we are going to format the delegationHistory like this;
+    const delegationHistory = [];
+
+    // if the account has delegations
+    if (accountDelegations == null) {
+      // or leave it blank if they have none
+      userAccount.delegations = [];
+    } else {
+      // take the accountDelegations  data
+      const delegations = accountDelegations;
+
+      // and foreach of the delegations therein
+      for (let ds = 0; ds < delegations.length; ds += 1) {
+        // create an array of tx history
+        // Next, for each delegation, grab provider details from the DB via Apollo
+
+        /* eslint-disable no-await-in-loop */
+        const providerData = await fetchProviderIdentity(
+          delegations[ds].validator_address,
+        );
+        const rewardsData = await fetchTerraDelegationRewards(
+          address, (delegations[ds].validator_address).toString(),
+        );
+        /* eslint-enable no-await-in-loop */
+
+        // If the provider_name from the providerData
+        let provider_name = providerData.providerName;
+
+        // Is not found or is a blank
+        if (providerData.providerName === '') {
+          // check the validatorSet for the operator_address
+          for (let i = 0; i < validatorSet.length; i += 1) {
+            if (
+              validatorSet[i].operator_address
+              === delegations[ds].validator_address
+            ) {
+              // and set name as moniker instead
+              provider_name = validatorSet[i].description.moniker;
+              break;
+            }
+          }
+          delegations[ds].providerName = provider_name;
+        } else {
+          delegations[ds].providerName = providerData.providerName;
+        }
+
+        // Add the logo and provider URL as well; blanks are ok here
+        delegations[ds].providerLogo = providerData.providerLogo;
+        delegations[ds].providerURL = providerData.providerURL;
+        delegations[ds].rewardsData = rewardsData;
+
+        // Add a copy of the shares value as a balance key for integrations into delegation flow
+        delegations[ds].balance = delegations[ds].shares;
+
+        // add the delegation to the array
+        delegationHistory.push(delegations[ds]);
+      }
+      // add the delegation history array to the userAccount Object
+      userAccount.delegations = delegationHistory;
+    }
+
+    // set the balance mirror key value for delegation flow integrations
+    if (userAccount.coins.length > 0) {
+      userAccount.balance = userAccount.coins[0].amount;
+    } else {
+      userAccount.balance = 0;
+    }
     console.log(userAccount);
     return userAccount;
   } catch (e) {

@@ -23,7 +23,8 @@
           />
         </q-card-section>
         <q-card-section>
-          <LedgerVoteSteps v-show="ledgerVoteStepsVisible" />
+          <LedgerVoteSteps v-if="ledgerVoteStepsVisible" />
+          <LedgerDelegationSteps v-if="ledgerDelegationStepsVisible" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -32,11 +33,13 @@
 
 <script>
 import LedgerVoteSteps from '../components/governance/LedgerVoteSteps';
+import LedgerDelegationSteps from '../components/delegation/LedgerDelegationSteps';
 
 export default {
   name: 'LedgerStepsContainer',
   components: {
     LedgerVoteSteps,
+    LedgerDelegationSteps,
   },
   data() {
     return {
@@ -54,6 +57,11 @@ export default {
     ledgerVoteStepsVisible: {
       get() {
         return this.$store.state.session.ledgerVoteStepsVisible;
+      },
+    },
+    ledgerDelegationStepsVisible: {
+      get() {
+        return this.$store.state.session.ledgerDelegationStepsVisible;
       },
     },
   },

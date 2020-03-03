@@ -5,10 +5,12 @@ import CosmosApp from 'ledger-cosmos-js';
 import {
   createCosmosAddress, createIrisAddress, createTerraAddress, createKavaAddress,
 } from '../../helpers/wallet';
-// import { enrichCosmosAccount, enrichIrisAccount } from '../../helpers/accountEnrichment';
 import {
-  fetchCosmosAccountAuthInfo,
-} from '../../services/cosmos/api';
+  enrichCosmosAccount, enrichIrisAccount, enrichKavaAccount, enrichTerraAccount,
+} from '../../helpers/accountEnrichment';
+// import {
+//   fetchCosmosAccountAuthInfo,
+// } from '../../services/api';
 
 
 /**
@@ -90,42 +92,55 @@ export const getLedgerAccountDetails = async ({
 
     // create new CosmosApp Instance using ledger-cosmos-js
     const app = new CosmosApp(transport);
-    // const pubKey = await app.showAddressAndPubKey(state.HDPATH, 'cosmos');
-    // parse Ledger account for the first HDPATH
-    // parse Ledger account for the first HDPATH
     const pubKey = await app.publicKey(state.HDPATH);
+
+    const irisAddress = createIrisAddress(pubKey.compressed_pk);
+    const cosmosAddress = createCosmosAddress(pubKey.compressed_pk);
+    const kavaAddress = createKavaAddress(pubKey.compressed_pk);
+    const terraAddress = createTerraAddress(pubKey.compressed_pk);
+    commit('SET_IRIS_ADDRESS', irisAddress);
+    commit('SET_COSMOS_ADDRESS', cosmosAddress);
+    commit('SET_KAVA_ADDRESS', kavaAddress);
+    commit('SET_TERRA_ADDRESS', terraAddress);
+
     const account = {
       HDPATH: state.HDPATH,
       pubKey,
     };
-    console.log(account, pubKey);
-    const irisAddress = createIrisAddress(pubKey.compressed_pk);
-    const cosmosAddress = createCosmosAddress(pubKey.compressed_pk);
-    const accountInfo = await fetchCosmosAccountAuthInfo(cosmosAddress);
-    const userAccount = Object.assign({}, accountInfo.value);
-    userAccount.pubKey = pubKey.compressed_pk;
-    userAccount.HDPATH = state.HDPATH;
+    console.log(account);
 
-    console.log(userAccount);
 
-    console.log(irisAddress, cosmosAddress);
-    // Commit the enrichedAccounts to state
-    commit('SET_IRIS_ADDRESS', irisAddress);
-    commit('SET_COSMOS_ADDRESS', cosmosAddress);
+    console.log('fetching enriched accounts');
 
+    const enrichedCosmosAccount = await enrichCosmosAccount(account);
+    console.log(enrichedCosmosAccount);
+
+    const enrichedTerraAccount = await enrichTerraAccount(account);
+    console.log(enrichedTerraAccount);
+
+    const enrichedKavaAccount = await enrichKavaAccount(account);
+    console.log(enrichedKavaAccount);
+
+    const enrichedIrisAccount = await enrichIrisAccount(account);
+    console.log(enrichedIrisAccount);
+
+    commit('SET_IRIS_ACCOUNT', enrichedIrisAccount);
+    commit('SET_COSMOS_ACCOUNT', enrichedCosmosAccount);
+    commit('SET_KAVA_ACCOUNT', enrichedKavaAccount);
+    commit('SET_TERRA_ACCOUNT', enrichedTerraAccount);
     // let enrichedAccount;
-    // console.log(rootState.session.network);
-    // if (rootState.session.network === 'cosmos') {
+    // console.log(rootState.session.networkConstants);
+    // if (rootState.session.networkConstants === 'cosmos') {
     //   // enrichedAccount = await enrichCosmosAccount(account);
-    // } else if (rootState.session.network === 'iris') {
+    // } else if (rootState.session.networkConstants === 'iris') {
     //   enrichedAccount = await enrichIrisAccount(account);
     // }
     // console.log(enrichedAccount);
 
     // Commit the enrichedAccount to state
-    commit('SET_ACCOUNT', userAccount);
+    // commit('SET_ACCOUNT', userAccount);
     commit('session/SET_DONE_LOADING', { ledger: false }, { root: true });
   } catch (e) {
-    dispatch('session/logError', e, { root: true });
+    throw new Error(e);
   }
 };

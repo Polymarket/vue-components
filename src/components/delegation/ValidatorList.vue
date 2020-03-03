@@ -6,6 +6,7 @@
       style="max-width: 900px"
     >
       <q-item-label header>
+        <ActiveNetworkLogo />
         Providers
       </q-item-label>
 
@@ -38,7 +39,7 @@
           side
         >
           <div class="text-grey-9 q-gutter-xs">
-            <ValidatorMenuPopupButton />
+            <ValidatorMenuPopupButton :validator="p" />
           </div>
         </q-item-section>
       </q-item>
@@ -49,6 +50,7 @@
 <script>
 import gql from 'graphql-tag';
 import ValidatorMenuPopupButton from 'src/components/common/button/ValidatorMenuPopupButton';
+import ActiveNetworkLogo from 'src/components/common/logo/ActiveNetworkLogo';
 
 const validatorsQuery = gql`
  query providers($token_name: String!) {
@@ -67,6 +69,8 @@ export default {
   name: 'ValidatorList',
   components: {
     ValidatorMenuPopupButton,
+    ActiveNetworkLogo,
+
   },
   apollo: {
     providers: {
@@ -86,7 +90,7 @@ export default {
   computed: {
     currentNetwork: {
       get() {
-        return this.$store.state.session.networkName;
+        return this.$store.state.session.networkConfig.networkNameProper;
       },
     },
     currentNetworkProviders: {
@@ -94,14 +98,7 @@ export default {
         return this.providers[this.currentNetwork];
       },
     },
-    selectedValidator: {
-      get() {
-        return this.$store.state.delegation.targetValidator;
-      },
-      set(val) {
-        this.$store.commit('delegation/SET_TARGET_VALIDATOR', val);
-      },
-    },
+
   },
 };
 </script>

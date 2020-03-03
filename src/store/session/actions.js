@@ -1,4 +1,5 @@
 import { BottomSheet } from 'quasar';
+import { chains } from '../../config';
 
 export const toggleLeftDrawer = async ({ commit }, payload) => {
   commit('SET_LEFT_DRAWER', payload);
@@ -40,8 +41,7 @@ export const toggleNetworkSheet = async ({ commit }) => {
       },
     ],
   }).onOk((action) => {
-    commit('SET_NETWORK_NAME', action.meta);
-    commit('SET_NETWORK', action.id);
+    commit('SET_NETWORK_CONFIG', chains[action.id]);
     commit('ADD_LOG_MESSAGE', `Now connected to ${action.id}`);
   }).onCancel(() => {
     // console.log('Dismissed')
@@ -80,6 +80,14 @@ export const showLedgerVoteSteps = async ({ commit }) => {
 };
 export const hideLedgerVoteSteps = async ({ commit }) => {
   commit('HIDE_LEDGER_VOTE_STEPS');
+};
+
+
+export const showLedgerDelegationSteps = async ({ commit }) => {
+  commit('SHOW_LEDGER_DELEGATION_STEPS');
+};
+export const hideLedgerDelegationSteps = async ({ commit }) => {
+  commit('HIDE_LEDGER_DELEGATION_STEPS');
 };
 
 

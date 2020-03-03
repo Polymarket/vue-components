@@ -7,44 +7,72 @@
     >
       <q-card-section>
         <div class="text-h7">
-          Detailed Account Information
+          Account Details
         </div>
-        <q-list
-          dense
-          class="q-ma-none q-pa-sm"
-        >
-          <q-item>
-            <q-item-section>
-              <q-item-label overline />
+        <q-list>
+          <q-item class="q-ma-sm q-pa-sm">
+            <q-item-section avatar>
+              <q-avatar rounded>
+                <img src="statics/logos/cosmos.svg">
+              </q-avatar>
             </q-item-section>
-          </q-item>
-
-          <q-item>
             <q-item-section>
+              <q-item-label>Cosmos</q-item-label>
               <q-item-label caption>
-                {{ networkName }}
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-item-label caption>
-                {{ address.cosmos }}
+                <span class="text-weight-bold">{{ account.cosmos }}</span>
               </q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item>
+          <q-separator />
+
+          <q-item class="q-ma-sm q-pa-sm">
+            <q-item-section avatar>
+              <q-avatar rounded>
+                <img src="statics/logos/irisnet.svg">
+              </q-avatar>
+            </q-item-section>
             <q-item-section>
+              <q-item-label>Iris</q-item-label>
               <q-item-label caption>
-                Iris
+                <span class="text-weight-bold">{{ account.iris }}</span>
               </q-item-label>
             </q-item-section>
-            <q-item-section side>
+          </q-item>
+
+          <q-separator />
+
+          <q-item class="q-ma-sm q-pa-sm">
+            <q-item-section avatar>
+              <q-avatar rounded>
+                <img src="statics/logos/terra.svg">
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Terra</q-item-label>
               <q-item-label caption>
-                {{ address.iris }}
+                <span class="text-weight-bold">{{ account.terra }}</span>
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-separator />
+
+          <q-item class="q-ma-sm q-pa-sm">
+            <q-item-section avatar>
+              <q-avatar rounded>
+                <img src="statics/logos/kava.svg">
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Kava</q-item-label>
+              <q-item-label caption>
+                <span class="text-weight-bold">{{ account.kava }}</span>
               </q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
+
         <q-separator />
 
         <q-card-actions>
@@ -70,7 +98,7 @@ export default {
     return {};
   },
   computed: {
-    ...mapState('ledger', ['address', 'detected', 'locked']),
+    ...mapState('ledger', ['account', 'detected', 'locked']),
     buttonEnabled() {
       if (this.detected === true && this.locked === false) {
         return false;
@@ -81,9 +109,14 @@ export default {
       }
       return true;
     },
+    networkName: {
+      get() {
+        return this.$store.state.session.networkConfig.networkNameProper;
+      },
+    },
     accountButtonText() {
       if (this.detected === true && this.locked === false) {
-        return 'View Your Address';
+        return `View Account Info for ${this.networkConfig.networkNameProper}`;
       } if (this.detected === true && this.locked === true) {
         return 'Your ledger is locked';
       } if (this.detected !== true) {
@@ -94,7 +127,7 @@ export default {
   },
   methods: {
     getAccountDetails() {
-      this.$store.dispatch('ledger/viewLedgerAddress');
+      this.$store.dispatch('ledger/getLedgerAccountDetails');
     },
   },
 };

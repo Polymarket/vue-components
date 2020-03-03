@@ -5,6 +5,7 @@ import session from './session';
 import ledger from './ledger';
 import governance from './governance';
 import delegation from './delegation';
+import kava from './kava';
 import iris from './iris';
 import cosmos from './cosmos';
 
@@ -27,6 +28,7 @@ export default function (/* { ssrContext } */) {
       governance,
       delegation,
       iris,
+      kava,
       cosmos,
     },
 

@@ -3,12 +3,16 @@ export const TEZOS = 'tezos';
 export const COSMOS = 'cosmos';
 export const LIVEPEER = 'livepeer';
 export const IRIS = 'irisnet';
+export const KAVA = 'kava';
+export const TERRA = 'terra';
 
 // @@@@@@@@@@@-------Protocol_Names--------@@@@@@@@@@@
 export const TEZOS_SYM = 'XTZ';
 export const COSMOS_SYM = 'ATOM';
 export const LIVEPEER_SYM = 'LPT';
 export const IRIS_SYM = 'IRIS';
+export const TERRA_SYM = 'LUNA';
+export const KAVA_SYM = 'KAVA';
 
 // @@@@@@@@@@@-------Operation_Types--------@@@@@@@@@@@
 export const GET_KEY = 0;
@@ -36,6 +40,15 @@ export const IRISATTO = 'iris-atto';
 export const IRISFEEAMOUNT = 500000000000000000;
 export const IRISGAS = 50000;
 
+export const KAVAMAINNET = 'kava-2';
+export const KAVADENOM = 'ukava';
+export const KAVAFEEAMOUNT = 500000000000000000;
+export const KAVAGAS = 90000;
+
+export const TERRAMAINNET = 'columbus-3';
+export const TERRADENOM = 'luna';
+export const TERRAFEEAMOUNT = 500000000000000000;
+export const TERRAGAS = 50000;
 
 // @@@@@@@@@@@-------Tx Memos--------@@@@@@@@@@@
 

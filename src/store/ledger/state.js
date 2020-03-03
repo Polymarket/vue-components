@@ -12,7 +12,12 @@ export default function () {
       kava: null,
       terra: null,
     },
-    account: {},
+    account: {
+      cosmos: null,
+      iris: null,
+      kava: null,
+      terra: null,
+    },
     transportChoice: 'WebUSB',
   };
 }

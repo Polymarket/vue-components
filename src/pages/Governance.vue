@@ -24,7 +24,7 @@ export default {
   computed: {
     activeNetwork: {
       get() {
-        return this.$store.state.session.network;
+        return this.$store.state.session.networkConfig.networkNameLC;
       },
     },
     activeNetworkProposals: {

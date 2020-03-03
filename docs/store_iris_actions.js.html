@@ -19,11 +19,11 @@
 
     <h1 class="page-title">Source: store/iris/actions.js</h1>
 
-    
 
 
 
-    
+
+
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import Irisnet from 'irisnet-crypto';
@@ -143,7 +143,7 @@ export const beginIrisDelegation = async ({
 
 /**
  * @function beginRedelegation
- * @description creates delegation transaction, awaits signature, sends to network
+ * @description creates delegation transaction, awaits signature, sends to networkConstants
  */
 export const beginRedelegation = async ({
   rootState,
@@ -186,7 +186,7 @@ export const beginRedelegation = async ({
 
 /**
  * @function withdrawAllRewards
- * @description creates delegation transaction, awaits signature, sends to network
+ * @description creates delegation transaction, awaits signature, sends to networkConstants
  */
 export const withdrawAllRewards = async ({
   dispatch,
@@ -276,7 +276,7 @@ export const buildSignSendIrisTx = async ({ rootState, dispatch, commit }, reque
       'delegation/toggleLoadingModal', {
         visible: true,
         header: '',
-        footer: 'Broadcasting signed transaction to the network..',
+        footer: 'Broadcasting signed transaction to the networkConstants..',
       }, {
         root: true,
       },

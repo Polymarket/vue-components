@@ -23,8 +23,12 @@ export function SET_NETWORK(state, val) {
   state.network = val;
 }
 export function SET_NETWORK_NAME(state, val) {
-  state.networkName = val;
+  state.networkConfig.networkNameProper = val;
 }
+export function SET_NETWORK_CONFIG(state, val) {
+  state.networkConfig = Object.assign({}, val);
+}
+
 
 export function SHOW_STEPS_CONTAINER(state) {
   state.stepsContainerVisible = true;
@@ -39,6 +43,13 @@ export function SHOW_LEDGER_VOTE_STEPS(state) {
 }
 export function HIDE_LEDGER_VOTE_STEPS(state) {
   state.ledgerVoteStepsVisible = false;
+}
+
+export function SHOW_LEDGER_DELEGATION_STEPS(state) {
+  state.ledgerDelegationStepsVisible = true;
+}
+export function HIDE_LEDGER_DELEGATION_STEPS(state) {
+  state.ledgerDelegationStepsVisible = false;
 }
 
 export function TOGGLE_REDELEGATION_STEPS(state) {

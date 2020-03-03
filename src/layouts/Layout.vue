@@ -18,18 +18,21 @@
         </q-toolbar-title>
 
         <LedgerDropdown />
+
+        <q-btn
+          flat
+          :label="this.$store.state.session.networkConfig.networkNameProper"
+          round
+          dense
+          icon="language"
+          @click="showNetworkSelectionSheet"
+        />
+        <q-space />
         <q-btn
           flat
           round
           icon="dynamic_feed"
           @click="rightDrawer = !rightDrawer"
-        />
-        <q-btn
-          flat
-          round
-          dense
-          icon="language"
-          @click="showNetworkSelectionSheet"
         />
       </q-toolbar>
     </q-header>
