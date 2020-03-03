@@ -1,6 +1,6 @@
 export default {
   delegationAmount: 0,
-  targetValidator: {
+  targetProvider: {
     value: '',
     operator_address: '',
     description: '',

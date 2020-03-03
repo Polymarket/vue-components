@@ -41,7 +41,6 @@
         icon="account_balance"
         :done="step > 2"
       >
-
         <q-item
           class="q-ma-sm"
         >
@@ -50,22 +49,26 @@
             top
           >
             <q-avatar>
-              <img :src="targetValidator.logo">
+              <img :src="targetProvider.logo">
             </q-avatar>
           </q-item-section>
 
           <q-item-section top>
             <q-item-label overflow-auto>
-              <span class="text-weight-bold">{{ targetValidator.label }}</span>
+              <span class="text-weight-bold">{{ targetProvider.label }}</span>
             </q-item-label>
             <q-item-label>
-              {{ targetValidator.location }}
+              {{ targetProvider.location }}
             </q-item-label>
           </q-item-section>
         </q-item>
 
         <div class="q-pa-md">
-          <q-input outlined label="Amount to Delegate" v-model="delegationAmount" />
+          <q-input
+            v-model="delegationAmount"
+            outlined
+            label="Amount to Delegate"
+          />
         </div>
 
         <q-stepper-navigation>
@@ -99,7 +102,6 @@
             color="primary"
             label="Submit"
             @click="delegate"
-
           />
           <q-btn
             flat
@@ -107,6 +109,13 @@
             label="Back"
             class="q-ml-sm"
             @click="step = 2"
+          />
+          <q-btn
+            flat
+            color="primary"
+            label="Back"
+            class="q-ml-sm"
+            @click="endDelegation"
           />
         </q-stepper-navigation>
       </q-step>
@@ -180,9 +189,9 @@ export default {
         return this.$store.state.session.ledgerTxInProgress;
       },
     },
-    targetValidator: {
+    targetProvider: {
       get() {
-        return this.$store.state.delegation.targetValidator;
+        return this.$store.state.delegation.targetProvider;
       },
     },
     delegationAmount: {
@@ -206,6 +215,9 @@ export default {
     delegate() {
       // this.$store.dispatch('ledger/delegate');
       this.$store.dispatch('kava/beginDelegation');
+    },
+    endDelegation() {
+      this.$store.dispatch('session/endDelegationTransaction');
     },
   },
 };

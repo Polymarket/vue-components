@@ -22,7 +22,7 @@ import {
 export const beginDelegation = async ({ dispatch, rootState }) => {
   try {
     const msg = {
-      validator_addr: rootState.delegation.targetValidator.operator_address,
+      validator_addr: rootState.delegation.targetProvider.operator_address,
       delegator_addr:
         rootState.ledger.account[rootState.session.networkConfig.networkNameLC].address,
       amount: {

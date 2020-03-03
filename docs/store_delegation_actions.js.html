@@ -19,11 +19,11 @@
 
     <h1 class="page-title">Source: store/delegation/actions.js</h1>
 
-    
 
 
 
-    
+
+
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
@@ -33,7 +33,7 @@
  */
 export const beginDelegation = ({ state, dispatch, commit }, validator) => {
   try {
-    console.log('delegating', state.delegationAmount, 'to validator', state.targetValidator);
+    console.log('delegating', state.delegationAmount, 'to validator', state.targetProvider);
     commit('delegation/SET_TARGET_VALIDATOR', validator, { root: true });
 
     dispatch('session/showStepsContainer', null, { root: true });

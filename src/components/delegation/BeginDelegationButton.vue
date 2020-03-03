@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     disabled() {
-      if (this.$store.state.delegation.targetValidator !== null
+      if (this.$store.state.delegation.targetProvider !== null
       && this.$store.state.delegation.delegationAmount > 0) {
         return false;
       }

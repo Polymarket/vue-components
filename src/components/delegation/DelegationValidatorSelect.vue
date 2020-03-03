@@ -51,7 +51,7 @@ export default {
     },
     selectedValidator: {
       get() {
-        return this.$store.state.delegation.targetValidator;
+        return this.$store.state.delegation.targetProvider;
       },
       set(val) {
         this.$store.commit('delegation/SET_TARGET_VALIDATOR', val);

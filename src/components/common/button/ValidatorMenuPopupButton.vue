@@ -26,7 +26,7 @@
         <q-item
           v-close-popup
           clickable
-          @click="delegate"
+          @click="claimRewards"
         >
           <q-item-section>Claim Rewards</q-item-section>
         </q-item>
@@ -34,7 +34,7 @@
         <q-item
           v-close-popup
           clickable
-          @click="delegate"
+          @click="redelegate"
         >
           <q-item-section>Redelegate</q-item-section>
         </q-item>
@@ -43,7 +43,7 @@
         <q-item
           v-close-popup
           clickable
-          @click="delegate"
+          @click="unbond"
         >
           <q-item-section>Unbond</q-item-section>
         </q-item>
@@ -65,28 +65,28 @@ export default {
   data() {
     return {};
   },
-  computed: {
-    selectedValidator: {
-      get() {
-        return this.$store.state.delegation.targetValidator;
-      },
-      set(val) {
-        this.$store.commit('delegation/SET_TARGET_VALIDATOR', val);
-      },
-    },
-  },
+  // computed: {
+  //   selectedValidator: {
+  //     get() {
+  //       return this.$store.state.delegation.targetProvider;
+  //     },
+  //     set(val) {
+  //       this.$store.commit('delegation/SET_TARGET_VALIDATOR', val);
+  //     },
+  //   },
+  // },
   methods: {
     delegate() {
-      this.$store.dispatch('delegation/beginDelegation', this.validator);
+      this.$store.dispatch('session/beginDelegation', this.validator);
     },
     claimRewards() {
-      this.$store.dispatch('kava/beginDelegation');
+      this.$store.dispatch('delegation/createRewardClaimTx', this.validator);
     },
     redelegate() {
-      this.$store.dispatch('kava/beginDelegation');
+      this.$store.dispatch('delegation/createRedelegationTx', this.validator);
     },
     unbond() {
-      this.$store.dispatch('kava/beginDelegation');
+      this.$store.dispatch('delegation/createUnbondTx', this.validator);
     },
   },
 };

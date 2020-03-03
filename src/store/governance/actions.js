@@ -91,38 +91,6 @@ export const queryCosmosProposals = async ({ commit, dispatch }) => {
 };
 
 
-/**
- * @function beginVoteTransaction
- * @param  {type} payload  {the proposal id for voting}
- * @description initiates the voting sequence for a governance proposal
- */
-export const beginVoteTransaction = ({ commit, dispatch }, payload) => {
-  try {
-    dispatch('session/showStepsContainer', null, { root: true });
-    dispatch('session/showLedgerVoteSteps', null, { root: true });
-    commit('SET_VOTE_PROPOSAL', payload);
-  } catch (e) {
-    dispatch('session/logError', e, { root: true });
-  }
-};
-
-/**
- * @function endVoteTransaction
- * @description cleans up following a voting transaction.
- */
-export const endVoteTransaction = ({ commit, dispatch }) => {
-  try {
-    dispatch('session/hideStepsContainer', null, { root: true });
-    dispatch('session/hideLedgerVoteSteps', null, { root: true });
-    dispatch('session/setLedgerTxInProgress', false, { root: true });
-    dispatch('session/setLedgerTxCurrentStepNumber', 1, { root: true });
-    dispatch('session/setLedgerTxCurrentStepOptionalMsg', '', { root: true });
-    commit('SET_VOTE_PROPOSAL', null);
-  } catch (e) {
-    dispatch('session/logError', e, { root: true });
-  }
-};
-
 export const vote = async ({ state, rootState, dispatch }, payload) => {
   // Delegate message (same for unbonding)
   try {
