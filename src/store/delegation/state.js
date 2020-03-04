@@ -9,5 +9,13 @@ export default {
     location: '',
     token_name: '',
   },
-
+  fromProvider: {
+    value: '',
+    operator_address: '',
+    description: '',
+    label: '',
+    logo: '',
+    location: '',
+    token_name: '',
+  },
 };

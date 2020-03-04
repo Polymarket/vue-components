@@ -43,6 +43,7 @@ export const connectLedger = async ({ state, commit, dispatch }) => {
       dispatch('session/logError', response.error_message, { root: true });
     } else {
       commit('SET_LEDGER_APP_INFO', response);
+      dispatch('getLedgerAccountDetails');
     }
   } catch (error) {
     dispatch('session/logError', error, { root: true });

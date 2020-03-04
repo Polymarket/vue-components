@@ -1,16 +1,16 @@
 <template>
   <q-page padding>
-    <DelegationEntry />
+    <ValidatorList />
   </q-page>
 </template>
 
 <script>
-import DelegationEntry from '../components/delegation/DelegationEntry';
+import ValidatorList from '../components/common/ValidatorList';
 
 export default {
   name: 'Delegation',
   components: {
-    DelegationEntry,
+    ValidatorList,
   },
 };
 </script>

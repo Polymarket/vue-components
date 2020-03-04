@@ -105,7 +105,7 @@ export const setLedgerTxCurrentStepOptionalMsg = async ({ commit }, payload) => 
 
 
 /**
- * @function beginDelegation
+ * @function beginDelegationTransaction
  * @description initiates the delegation sequence
  */
 export const beginDelegationTransaction = ({ commit, dispatch }, validator) => {
@@ -113,6 +113,52 @@ export const beginDelegationTransaction = ({ commit, dispatch }, validator) => {
     commit('delegation/SET_TARGET_VALIDATOR', validator, { root: true });
     commit('SHOW_STEPS_CONTAINER');
     commit('SHOW_LEDGER_DELEGATION_STEPS');
+  } catch (e) {
+    dispatch('logError', e);
+  }
+};
+
+/**
+ * @function beginReDelegationTransaction
+ * @description initiates the redelegation sequence
+ */
+export const beginReDelegationTransaction = ({ commit, dispatch }, srcValidator, toValidator) => {
+  try {
+    commit('delegation/SET_TARGET_VALIDATOR', toValidator, { root: true });
+    commit('delegation/SET_SRC_VALIDATOR', srcValidator, { root: true });
+    commit('SHOW_STEPS_CONTAINER');
+    commit('SHOW_LEDGER_DELEGATION_STEPS');
+  } catch (e) {
+    dispatch('logError', e);
+  }
+};
+
+/* eslint-disable */
+
+/**
+ * @function beginUnbondingTransaction
+ * @description initiates the unbonding sequence
+ */
+export const beginUnbondingTransaction = ({ commit, dispatch }, validator) => {
+  try {
+    // commit('delegation/SET_TARGET_VALIDATOR', validator, { root: true });
+    // commit('SHOW_STEPS_CONTAINER');
+    // commit('SHOW_LEDGER_DELEGATION_STEPS');
+  } catch (e) {
+    dispatch('logError', e);
+  }
+};
+
+
+/**
+ * @function beginRewardClaimTransaction
+ * @description initiates the reward claim sequence
+ */
+export const beginRewardClaimTransaction = ({ commit, dispatch }, validator) => {
+  try {
+    // commit('delegation/SET_TARGET_VALIDATOR', validator, { root: true });
+    // commit('SHOW_STEPS_CONTAINER');
+    // commit('SHOW_LEDGER_DELEGATION_STEPS');
   } catch (e) {
     dispatch('logError', e);
   }
@@ -132,7 +178,7 @@ export const beginVoteTransaction = ({ commit, dispatch }, payload) => {
     dispatch('session/logError', e, { root: true });
   }
 };
-
+/* eslint-enable */
 
 /**
  * @function endVoteTransaction

@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="amount"
+    v-model="delegationAmount"
     outlined
     bottom-slots
   >
@@ -17,12 +17,12 @@ export default {
     return {};
   },
   computed: {
-    amount: {
+    delegationAmount: {
       get() {
         return this.$store.state.delegation.delegationAmount;
       },
       set(val) {
-        this.$store.commit('delegation/SET_DELEGATION_AMOUNT', val);
+        this.$store.dispatch('delegation/setDelegationAmount', val);
       },
     },
   },

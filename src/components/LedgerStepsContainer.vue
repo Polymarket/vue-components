@@ -9,10 +9,6 @@
         flat
       >
         <q-card-section class="row items-center q-pa-none">
-          <!-- <div class="text-h6">
-            Close icon
-          </div> -->
-          <!-- <q-space /> -->
           <q-btn
             v-close-popup
             class="q-pa-sm"
@@ -25,6 +21,7 @@
         <q-card-section>
           <LedgerVoteSteps v-if="ledgerVoteStepsVisible" />
           <LedgerDelegationSteps v-if="ledgerDelegationStepsVisible" />
+          <LedgerReDelegationSteps v-if="ledgerReDelegationStepsVisible" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -34,12 +31,14 @@
 <script>
 import LedgerVoteSteps from '../components/governance/LedgerVoteSteps';
 import LedgerDelegationSteps from '../components/delegation/LedgerDelegationSteps';
+import LedgerReDelegationSteps from '../components/delegation/LedgerReDelegationSteps';
 
 export default {
   name: 'LedgerStepsContainer',
   components: {
     LedgerVoteSteps,
     LedgerDelegationSteps,
+    LedgerReDelegationSteps,
   },
   data() {
     return {
@@ -62,6 +61,11 @@ export default {
     ledgerDelegationStepsVisible: {
       get() {
         return this.$store.state.session.ledgerDelegationStepsVisible;
+      },
+    },
+    ledgerReDelegationStepsVisible: {
+      get() {
+        return this.$store.state.session.ledgerReDelegationStepsVisible;
       },
     },
   },

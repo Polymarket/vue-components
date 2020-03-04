@@ -116,7 +116,7 @@ export default {
     },
     accountButtonText() {
       if (this.detected === true && this.locked === false) {
-        return `View Account Info for ${this.networkConfig.networkNameProper}`;
+        return `View Account Info for ${this.networkNameProper}`;
       } if (this.detected === true && this.locked === true) {
         return 'Your ledger is locked';
       } if (this.detected !== true) {
