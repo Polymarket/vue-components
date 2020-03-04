@@ -77,7 +77,7 @@ export default {
   // },
   methods: {
     delegate() {
-      this.$store.dispatch('session/beginDelegation', this.validator);
+      this.$store.dispatch('session/beginDelegationTransaction', this.validator);
     },
     claimRewards() {
       this.$store.dispatch('delegation/createRewardClaimTx', this.validator);

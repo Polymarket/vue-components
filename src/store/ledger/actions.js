@@ -6,8 +6,14 @@ import {
   createCosmosAddress, createIrisAddress, createTerraAddress, createKavaAddress,
 } from '../../helpers/wallet';
 import {
-  enrichIrisAccount, enrichKavaAccount, enrichTerraAccount,
+  enrichIrisAccount, enrichKavaAccount, enrichCosmosAccount, enrichTerraAccount,
 } from '../../helpers/accountEnrichment';
+import {
+  postCosmosSignedTx,
+  postIrisSignedTx,
+  postKavaSignedTx,
+  postTerraSignedTx,
+} from '../../services/api';
 // import {
 //   fetchCosmosAccountAuthInfo,
 // } from '../../services/api';
@@ -112,7 +118,7 @@ export const getLedgerAccountDetails = async ({
 
     // console.log('fetching enriched accounts');
 
-    // const enrichedCosmosAccount = await enrichCosmosAccount(account);
+    const enrichedCosmosAccount = await enrichCosmosAccount(account);
     // console.log(enrichedCosmosAccount);
 
     const enrichedTerraAccount = await enrichTerraAccount(account);
@@ -125,7 +131,7 @@ export const getLedgerAccountDetails = async ({
     // console.log(enrichedIrisAccount);
 
     commit('SET_IRIS_ACCOUNT', enrichedIrisAccount);
-    // commit('SET_COSMOS_ACCOUNT', enrichedCosmosAccount);
+    commit('SET_COSMOS_ACCOUNT', enrichedCosmosAccount);
     commit('SET_KAVA_ACCOUNT', enrichedKavaAccount);
     commit('SET_TERRA_ACCOUNT', enrichedTerraAccount);
     // let enrichedAccount;
@@ -143,4 +149,32 @@ export const getLedgerAccountDetails = async ({
   } catch (e) {
     throw new Error(e);
   }
+};
+
+
+export const postSignedTx = async ({ dispatch, rootState }, txData) => {
+  const network = rootState.session.networkConfig.networkNameLC;
+
+  let txResponse;
+
+  switch (network) {
+    case 'cosmos':
+      txResponse = await postCosmosSignedTx(txData);
+      break;
+    case 'iris':
+      txResponse = await postIrisSignedTx(txData);
+      break;
+    case 'terra':
+      txResponse = await postTerraSignedTx(txData);
+      break;
+    case 'kava':
+      txResponse = await postKavaSignedTx(txData);
+      break;
+    default:
+      console.log(network);
+  }
+  console.log(txResponse);
+
+  dispatch('session/setLedgerTxCurrentStepNumber', 4, { root: true });
+  dispatch('session/setLedgerTxCurrentStepOptionalMsg', txResponse.data, { root: true });
 };

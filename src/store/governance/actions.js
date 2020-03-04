@@ -1,7 +1,6 @@
 import Irisnet from 'irisnet-crypto';
 import {
   fetchCosmosGovernanceProposals,
-  postCosmosSignedTx,
   fetchIrisGovernanceProposals,
   fetchIrisGovProposalVotesByProposalId,
 } from '../../services/api';
@@ -136,10 +135,7 @@ export const vote = async ({ state, rootState, dispatch }, payload) => {
     txData.tx.signatures = sigs;
 
     // send tx to node
-    const txResponse = await postCosmosSignedTx(txData);
-
-    dispatch('session/setLedgerTxCurrentStepNumber', 4, { root: true });
-    dispatch('session/setLedgerTxCurrentStepOptionalMsg', txResponse.data, { root: true });
+    dispatch('ledger/postSignedTx', txData, { root: true });
   } catch (e) {
     dispatch('session/logInfo', e, { root: true });
   }

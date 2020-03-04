@@ -113,7 +113,7 @@
           <q-btn
             flat
             color="primary"
-            label="Back"
+            label="Cancel"
             class="q-ml-sm"
             @click="endDelegation"
           />
@@ -127,14 +127,15 @@
         <div class="text-h6">
           Transaction sent.
         </div>
-        <!--        Tx Hash: {{ stepMsg.txhash }}-->
-        <!--        Successful: {{ stepMsg.logs[0].success }}-->
+        Tx Hash: {{ stepMsg.txhash }}
+<!--        Successful: {{ stepMsg.logs[0].success }}-->
         <q-stepper-navigation>
           <q-btn
             flat
             color="primary"
             label="Exit"
             class="q-ml-sm"
+            @click="endDelegation"
           />
         </q-stepper-navigation>
       </q-step>
@@ -214,10 +215,10 @@ export default {
     },
     delegate() {
       // this.$store.dispatch('ledger/delegate');
-      this.$store.dispatch('kava/beginDelegation');
+      this.$store.dispatch('delegation/createDelegationTx');
     },
     endDelegation() {
-      this.$store.dispatch('session/endDelegationTransaction');
+      this.$store.dispatch('session/endLedgerTransaction');
     },
   },
 };

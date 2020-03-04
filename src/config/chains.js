@@ -9,17 +9,35 @@ export const chains = {
     denomMultiplier: 1000000,
     fee: 100,
     gas: 175000,
+    msgs: {
+      delegate: {
+        validator_addr: '',
+        delegation: {
+          denom: 'uatom',
+          amount: 0,
+        },
+      },
+    },
   },
   iris: {
     chainID: 'irishub',
     networkNameLC: 'iris',
     networkNameUC: 'IRIS',
-    networkNameProper: 'Iris',
+    networkNameProper: 'Irisnet',
     tokenDenom: 'iris',
     delegationDenom: 'iris-atto',
-    denomMultiplier: 10000000000000000000,
+    denomMultiplier: 1000000000000000000,
     fee: 500000000000000000,
     gas: 50000,
+    msgs: {
+      delegate: {
+        validator_addr: '',
+        amount: {
+          denom: 'iris-atto',
+          amount: 0,
+        },
+      },
+    },
   },
   kava: {
     chainID: 'kava-2',
@@ -31,6 +49,15 @@ export const chains = {
     denomMultiplier: 1000000,
     fee: 100,
     gas: 175000,
+    msgs: {
+      delegate: {
+        validator_addr: '',
+        amount: {
+          denom: 'ukava',
+          amount: 0,
+        },
+      },
+    },
   },
   terra: {
     chainID: 'columbus-3',
@@ -42,5 +69,14 @@ export const chains = {
     denomMultiplier: 1000000,
     fee: 100,
     gas: 175000,
+    msgs: {
+      delegate: {
+        validator_addr: '',
+        amount: {
+          denom: 'kluna',
+          amount: 0,
+        },
+      },
+    },
   },
 };

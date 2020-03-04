@@ -196,9 +196,7 @@ export const fetchCosmosDelegationUnbondingTxs = async (
 export const postCosmosSignedTx = async (txData) => {
   try {
     const url = `${COSMOS_NODE_URL}/txs`;
-    console.log(url, JSON.stringify(txData));
     const pr = await axios.post(url, JSON.stringify(txData));
-    console.log(pr);
     return pr;
   } catch (e) {
     throw new Error(e);

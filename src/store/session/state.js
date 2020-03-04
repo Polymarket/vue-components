@@ -6,6 +6,7 @@ export default {
     networkNameProper: 'Cosmos',
     tokenDenom: 'atom',
     delegationDenom: 'uatom',
+    denomMultiplier: 1000000,
     fee: 100,
     gas: 175000,
   },

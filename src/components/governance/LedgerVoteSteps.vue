@@ -195,7 +195,7 @@ export default {
       this.$store.dispatch('governance/vote', this.voteOption);
     },
     endVoting() {
-      this.$store.dispatch('session/endVoteTransaction');
+      this.$store.dispatch('session/endLedgerTransaction');
     },
   },
 };

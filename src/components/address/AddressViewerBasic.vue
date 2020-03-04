@@ -29,7 +29,7 @@
           <q-item class="q-ma-sm q-pa-sm">
             <q-item-section avatar>
               <q-avatar rounded>
-                <img src="statics/logos/irisnet.svg">
+                <img src="statics/logos/iris.svg">
               </q-avatar>
             </q-item-section>
             <q-item-section>

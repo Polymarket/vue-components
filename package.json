@@ -28,7 +28,7 @@
     "crypto-js": "^4.0.0",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.2",
-    "irisnet-crypto": "github:TokenUnion/irisnet-crypto#kava",
+    "irisnet-crypto": "github:TokenUnion/irisnet-crypto#master",
     "ledger-cosmos-js": "^2.1.7",
     "quasar": "^1.9.6",
     "secp256k1": "^4.0.0",

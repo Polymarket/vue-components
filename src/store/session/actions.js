@@ -23,7 +23,7 @@ export const toggleNetworkSheet = async ({ commit }) => {
       },
       {
         label: 'Irisnet',
-        img: 'statics/logos/irisnet.svg',
+        img: 'statics/logos/iris.svg',
         id: 'iris',
         meta: 'Irisnet',
       },
@@ -132,8 +132,6 @@ export const beginVoteTransaction = ({ commit, dispatch }, payload) => {
     dispatch('session/logError', e, { root: true });
   }
 };
-
-
 
 
 /**
